@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Infinity Search</title>
     <style>
         :root {
@@ -112,6 +112,7 @@
             border-radius: 12px;
             text-align: center;
             user-select: none;
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击蓝框 */
         }
 
         .engine-tabs input { display: none; }
@@ -135,16 +136,16 @@
 
     <div class="engine-tabs">
         <input type="radio" name="e" id="bd" value="bd">
-        <label for="bd" ondblclick="goDirect('https://www.baidu.com')">Baidu</label>
+        <label for="bd" data-url="https://www.baidu.com">Baidu</label>
 
         <input type="radio" name="e" id="gg" value="gg">
-        <label for="gg" ondblclick="goDirect('https://www.google.com')">Google</label>
+        <label for="gg" data-url="https://www.google.com">Google</label>
 
         <input type="radio" name="e" id="gpt" value="gpt">
-        <label for="gpt" ondblclick="goDirect('https://chatgpt.com')">ChatGPT</label>
+        <label for="gpt" data-url="https://chatgpt.com">ChatGPT</label>
 
         <input type="radio" name="e" id="gm" value="gm">
-        <label for="gm" ondblclick="goDirect('https://gemini.google.com')">Gemini</label>
+        <label for="gm" data-url="https://gemini.google.com">Gemini</label>
     </div>
 </div>
 
@@ -152,9 +153,28 @@
     const KEY = 'infinite_pref';
     const input = document.getElementById('q');
     
+    // 初始化
     window.onload = () => {
         const saved = localStorage.getItem(KEY) || 'gg';
-        document.getElementById(saved).checked = true;
+        const el = document.getElementById(saved);
+        if (el) el.checked = true;
+
+        // 为所有 label 绑定点击检测逻辑
+        document.querySelectorAll('.engine-tabs label').forEach(label => {
+            let lastClickTime = 0;
+            label.addEventListener('click', (e) => {
+                const currentTime = new Date().getTime();
+                const timeDiff = currentTime - lastClickTime;
+                
+                // 判断 300ms 内的两次点击为双击
+                if (timeDiff < 300 && timeDiff > 0) {
+                    e.preventDefault(); // 阻止默认行为
+                    const url = label.getAttribute('data-url');
+                    window.open(url, '_blank');
+                }
+                lastClickTime = currentTime;
+            });
+        });
     }
 
     function s() {
@@ -173,14 +193,8 @@
         window.open(urls[engine], '_blank');
     }
 
-    function goDirect(url) {
-        window.open(url, '_blank');
-    }
-
     input.onkeydown = (e) => { if(e.key === 'Enter') s(); }
 </script>
 
-
-    
 </body>
 </html>
