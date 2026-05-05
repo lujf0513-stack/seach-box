@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Infinity Search</title>
+    <title>Search</title>
+    
+    <!-- 设置网页图标为 🔍 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
+
     <style>
         :root {
             --apple-blue: #007AFF;
             --glass-bg: rgba(255, 255, 255, 0.7);
             --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #1d1d1f;
         }
 
         body {
@@ -25,7 +28,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding-top: 18vh;
+            padding-top: 15vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
         }
@@ -40,9 +43,9 @@
         h1 {
             font-size: 64px;
             font-weight: 200;
-            margin: 0 0 45px 0;
+            margin: 0 0 40px 0;
             letter-spacing: -3px;
-            color: #1d1d1f;
+            color: var(--text-main);
             opacity: 0.9;
             animation: tracking-in 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
         }
@@ -78,10 +81,10 @@
             padding: 15px 20px;
             font-size: 19px;
             outline: none;
-            color: #1d1d1f;
+            color: var(--text-main);
         }
 
-        button {
+        .search-btn {
             background: #1d1d1f;
             color: white;
             border: none;
@@ -93,7 +96,7 @@
             transition: all 0.3s;
         }
 
-        button:hover { background: #000; }
+        .search-btn:hover { background: #000; }
 
         .engine-tabs {
             display: grid;
@@ -102,6 +105,7 @@
             border-radius: 16px;
             padding: 4px;
             gap: 4px;
+            margin-bottom: 25px;
         }
 
         .engine-tabs label {
@@ -114,16 +118,46 @@
             border-radius: 12px;
             text-align: center;
             user-select: none;
-            -webkit-tap-highlight-color: transparent; /* 移除移动端点击蓝框 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .engine-tabs input { display: none; }
 
         .engine-tabs input:checked + label {
-            color: #1d1d1f;
+            color: var(--text-main);
             background: #ffffff;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+
+        /* 底部快捷导航与工具 */
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .shortcut-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 12px 0;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .shortcut-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .icon { font-size: 22px; margin-bottom: 5px; }
+        .label { font-size: 11px; color: #86868b; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -133,7 +167,7 @@
 
     <div class="search-wrapper">
         <input type="text" id="q" placeholder="有什么可以帮到你？" autocomplete="off" autofocus>
-        <button onclick="s()">搜索</button>
+        <button class="search-btn" onclick="s()">搜索</button>
     </div>
 
     <div class="engine-tabs">
@@ -149,30 +183,49 @@
         <input type="radio" name="e" id="gm" value="gm">
         <label for="gm" data-url="https://gemini.google.com">Gemini</label>
     </div>
+
+    <!-- 底部功能区域：虫洞传输 + 4个常用网址 -->
+    <div class="shortcuts-grid">
+        <a href="https://wormhole.app" target="_blank" class="shortcut-item">
+            <span class="icon">🕳️</span>
+            <span class="label">虫洞传输</span>
+        </a>
+        <a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank" class="shortcut-item">
+            <span class="icon">☁️</span>
+            <span class="label">宏云ERP</span>
+        </a>
+        <a href="https://mp.weixin.qq.com" target="_blank" class="shortcut-item">
+            <span class="icon">💬</span>
+            <span class="label">公众号</span>
+        </a>
+        <a href="https://www.xiaohongshu.com/explore" target="_blank" class="shortcut-item">
+            <span class="icon">📕</span>
+            <span class="label">小红书</span>
+        </a>
+        <a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank" class="shortcut-item">
+            <span class="icon">📦</span>
+            <span class="label">嘉立创</span>
+        </a>
+    </div>
 </div>
 
 <script>
-    const KEY = 'infinite_pref';
+    const KEY = 'infinite_pref_v4';
     const input = document.getElementById('q');
     
-    // 初始化
     window.onload = () => {
         const saved = localStorage.getItem(KEY) || 'gg';
         const el = document.getElementById(saved);
         if (el) el.checked = true;
 
-        // 为所有 label 绑定点击检测逻辑
         document.querySelectorAll('.engine-tabs label').forEach(label => {
             let lastClickTime = 0;
             label.addEventListener('click', (e) => {
                 const currentTime = new Date().getTime();
                 const timeDiff = currentTime - lastClickTime;
-                
-                // 判断 300ms 内的两次点击为双击
                 if (timeDiff < 300 && timeDiff > 0) {
-                    e.preventDefault(); // 阻止默认行为
-                    const url = label.getAttribute('data-url');
-                    window.open(url, '_blank');
+                    e.preventDefault();
+                    window.open(label.getAttribute('data-url'), '_blank');
                 }
                 lastClickTime = currentTime;
             });
@@ -182,10 +235,8 @@
     function s() {
         const txt = input.value.trim();
         if(!txt) return;
-
         const engine = document.querySelector('input[name="e"]:checked').id;
         localStorage.setItem(KEY, engine);
-
         const urls = {
             bd: `https://www.baidu.com/s?wd=${encodeURIComponent(txt)}`,
             gg: `https://www.google.com/search?q=${encodeURIComponent(txt)}`,
@@ -197,5 +248,6 @@
 
     input.onkeydown = (e) => { if(e.key === 'Enter') s(); }
 </script>
+
 </body>
 </html>
