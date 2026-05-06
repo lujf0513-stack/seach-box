@@ -5,20 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Search</title>
     
-    <!-- 🔍 图标 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
 
     <style>
         :root {
-            --apple-blue: #007AFF;
-            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-bg: rgba(255, 255, 255, 0.75);
             --glass-border: rgba(255, 255, 255, 0.4);
             --text-main: #1d1d1f;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --glass-bg: rgba(28, 28, 30, 0.75);
+                --glass-bg: rgba(28, 28, 30, 0.8);
                 --glass-border: rgba(255, 255, 255, 0.1);
                 --text-main: #ffffff;
             }
@@ -28,94 +26,79 @@
             margin: 0;
             height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-            /* 经典苹果多色渐变背景 */
             background: radial-gradient(at 0% 0%, #e2eafc 0, transparent 50%), 
                         radial-gradient(at 100% 0%, #f1f1f1 0, transparent 50%), 
                         radial-gradient(at 100% 100%, #e8f1ff 0, transparent 50%), 
                         radial-gradient(at 0% 100%, #ffffff 0, transparent 50%);
             background-attachment: fixed;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 18vh;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding-top: 18vh; overflow: hidden; -webkit-font-smoothing: antialiased;
         }
 
         @media (prefers-color-scheme: dark) {
-            body {
-                background: radial-gradient(at 0% 0%, #1c1c1e 0, transparent 50%), 
-                            radial-gradient(at 100% 0%, #2c2c2e 0, transparent 50%), 
-                            radial-gradient(at 100% 100%, #000 0, transparent 50%);
-            }
+            body { background: radial-gradient(at 0% 0%, #1c1c1e 0, transparent 50%), radial-gradient(at 100% 0%, #2c2c2e 0, transparent 50%), radial-gradient(at 100% 100%, #000 0, transparent 50%); }
         }
+
+        /* 左右挂件强制对齐 */
+        .widget-item {
+            position: fixed; top: 25px;
+            background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            width: 80px; height: 42px;
+            border-radius: 14px; box-shadow: 0 8px 16px rgba(0,0,0,0.04);
+            color: var(--text-main); z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: 0.3s ease;
+        }
+
+        #weather-display { left: 25px; font-size: 15px; font-weight: 500; cursor: pointer; overflow: hidden; }
+        #time-display { right: 25px; font-size: 16px; font-weight: 700; letter-spacing: -0.2px; }
+
+        .widget-item:hover { transform: translateY(2px); background: rgba(255, 255, 255, 0.9); }
 
         .container { width: 90%; max-width: 580px; text-align: center; }
+        h1 { font-size: 72px; font-weight: 200; margin: 0 0 45px 0; letter-spacing: -4px; color: var(--text-main); opacity: 0.9; }
 
-        h1 {
-            font-size: 64px; font-weight: 200; margin: 0 0 45px 0; letter-spacing: -3px;
-            color: var(--text-main); opacity: 0.9;
-            animation: tracking-in 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) both;
-        }
-
-        @keyframes tracking-in {
-            0% { letter-spacing: -10px; opacity: 0; filter: blur(10px); }
-            100% { letter-spacing: -3px; opacity: 0.9; filter: blur(0); }
-        }
-
-        /* 搜索组 */
-        .search-group { position: relative; margin-bottom: 20px; }
+        .search-group { position: relative; margin-bottom: 25px; }
         .search-wrapper {
-            background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border); border-radius: 24px;
-            padding: 8px; display: flex; align-items: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: all 0.3s ease;
+            background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 8px; display: flex; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05);
         }
-        .search-wrapper:focus-within { transform: scale(1.01); box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
-        
         input { flex: 1; border: none; background: transparent; padding: 15px 20px; font-size: 19px; outline: none; color: var(--text-main); }
-        
-        .search-btn {
-            background: var(--text-main); color: #fff; border: none; padding: 12px 28px;
-            border-radius: 18px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
-        }
-        .search-btn:hover { opacity: 0.85; }
-        .search-btn:active { transform: scale(0.96); }
+        .search-btn { background: var(--text-main); color: #fff; border: none; padding: 12px 28px; border-radius: 18px; font-size: 15px; font-weight: 600; cursor: pointer; }
         @media (prefers-color-scheme: dark) { .search-btn { background: #f5f5f7; color: #1d1d1f; } }
 
-        /* 联想建议 */
-        #suggestions {
-            position: absolute; top: 105%; left: 0; width: 100%;
-            background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1); display: none; list-style: none; padding: 10px 0; margin: 0; text-align: left; z-index: 100;
-        }
-        #suggestions li { padding: 12px 25px; font-size: 16px; cursor: pointer; color: var(--text-main); }
-        #suggestions li:hover { background: rgba(120, 120, 128, 0.1); color: var(--apple-blue); }
-
-        /* 引擎切换 */
-        .engine-tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(120, 120, 128, 0.1); border-radius: 16px; padding: 4px; gap: 4px; margin-bottom: 25px; }
-        .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; transition: 0.2s; }
+        .engine-tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(120, 120, 128, 0.12); border-radius: 16px; padding: 4px; gap: 4px; margin-bottom: 30px; }
+        .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; }
         .engine-tabs input { display: none; }
-        .engine-tabs input:checked + label { color: var(--text-main); background: var(--glass-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 600; }
+        .engine-tabs input:checked + label { color: var(--text-main); background: var(--glass-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-        /* 底部导航 */
-        .shortcuts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .shortcuts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
         .shortcut-item {
             background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border);
-            border-radius: 18px; padding: 12px 0; text-decoration: none; transition: all 0.3s ease;
-            display: flex; flex-direction: column; align-items: center;
+            border-radius: 20px; padding: 14px 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s;
         }
-        .shortcut-item:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .shortcut-item:active { transform: scale(0.95); }
-        .icon { font-size: 22px; margin-bottom: 5px; }
-        .label { font-size: 11px; color: #86868b; font-weight: 500; }
+        .shortcut-item:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.9); }
+
+        #suggestions {
+            position: absolute; top: 105%; left: 0; width: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 22px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: none; list-style: none; padding: 10px 0; margin: 0; text-align: left; z-index: 100;
+        }
+        #suggestions li { padding: 14px 25px; font-size: 16px; cursor: pointer; color: var(--text-main); }
+        #suggestions li:hover { background: rgba(120, 120, 128, 0.1); }
     </style>
 </head>
 <body>
 
+<a id="weather-display" class="widget-item" href="https://tianqi.moji.com/weather/china/jiangsu/kunshan" target="_blank">
+    🌤️ 22°
+</a>
+
+<div id="time-display" class="widget-item">00:00</div>
+
 <div class="container">
     <h1>Search</h1>
-
     <div class="search-group">
         <div class="search-wrapper">
             <input type="text" id="q" placeholder="有什么可以帮到你？" autocomplete="off" autofocus>
@@ -123,66 +106,89 @@
         </div>
         <ul id="suggestions"></ul>
     </div>
-
     <div class="engine-tabs">
         <input type="radio" name="e" id="bd" value="bd"><label for="bd" data-url="https://www.baidu.com">Baidu</label>
         <input type="radio" name="e" id="gg" value="gg"><label for="gg" data-url="https://www.google.com">Google</label>
         <input type="radio" name="e" id="gpt" value="gpt"><label for="gpt" data-url="https://chatgpt.com">ChatGPT</label>
         <input type="radio" name="e" id="gm" value="gm"><label for="gm" data-url="https://gemini.google.com">Gemini</label>
     </div>
-
     <div class="shortcuts-grid">
         <a href="https://wormhole.app" target="_blank" class="shortcut-item">
-            <span class="icon">🕳️</span><span class="label">虫洞传输</span>
+            <span style="font-size:24px; margin-bottom:6px">🕳️</span><span style="font-size:11px; color:#86868b; font-weight:600">虫洞传输</span>
         </a>
         <a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank" class="shortcut-item">
-            <span class="icon">☁️</span><span class="label">宏云ERP</span>
+            <span style="font-size:24px; margin-bottom:6px">☁️</span><span style="font-size:11px; color:#86868b; font-weight:600">宏云ERP</span>
         </a>
         <a href="https://mp.weixin.qq.com" target="_blank" class="shortcut-item">
-            <span class="icon">💬</span><span class="label">公众号</span>
+            <span style="font-size:24px; margin-bottom:6px">💬</span><span style="font-size:11px; color:#86868b; font-weight:600">公众号</span>
         </a>
         <a href="https://www.xiaohongshu.com/explore" target="_blank" class="shortcut-item">
-            <span class="icon">📕</span><span class="label">小红书</span>
+            <span style="font-size:24px; margin-bottom:6px">📕</span><span style="font-size:11px; color:#86868b; font-weight:600">小红书</span>
         </a>
         <a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank" class="shortcut-item">
-            <span class="icon">📦</span><span class="label">嘉立创</span>
+            <span style="font-size:24px; margin-bottom:6px">📦</span><span style="font-size:11px; color:#86868b; font-weight:600">嘉立创</span>
         </a>
     </div>
 </div>
 
 <script>
-    const KEY = 'pref_eng_final_stable';
+    const KEY = 'pref_eng_v10_stable';
     const input = document.getElementById('q');
     const sugBox = document.getElementById('suggestions');
 
-    window.onload = () => {
-        // 加载引擎偏好
-        const saved = localStorage.getItem(KEY) || 'gg';
-        const radio = document.getElementById(saved);
-        if (radio) radio.checked = true;
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('time-display').innerText = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+    }
 
-        // 引擎标签双击逻辑
+    async function updateWeather() {
+        const el = document.getElementById('weather-display');
+        try {
+            // 采用纯文本请求
+            const res = await fetch(`https://wttr.in/Kunshan?format=%c%t`);
+            if (!res.ok) throw new Error();
+            let text = await res.text();
+            
+            // 【重要】正则过滤掉所有 HTML 标签和多余文字
+            // 只匹配 Emoji 图标 + 温度数字
+            const cleanText = text.replace(/<[^>]*>/g, '').trim(); 
+            const match = cleanText.match(/[\uD800-\uDBFF][\uDC00-\uDFFF].*?[\d-]+°/);
+            
+            if (match) {
+                el.innerText = match[0];
+            } else {
+                // 如果正则没匹配到，尝试二次保底提取数字
+                const tempMatch = cleanText.match(/[\d-]+°/);
+                el.innerText = tempMatch ? "🌤️ " + tempMatch[0] : "🌤️ 22°";
+            }
+        } catch (e) {
+            el.innerText = "🌤️ 22°";
+        }
+    }
+
+    window.onload = () => {
+        const saved = localStorage.getItem(KEY) || 'gg';
+        if (document.getElementById(saved)) document.getElementById(saved).checked = true;
+        updateTime(); setInterval(updateTime, 1000); 
+        updateWeather(); setInterval(updateWeather, 1800000);
+
         document.querySelectorAll('.engine-tabs label').forEach(label => {
             let last = 0;
             label.addEventListener('click', (e) => {
                 const now = Date.now();
-                if (now - last < 300) {
-                    e.preventDefault();
-                    window.open(label.getAttribute('data-url'), '_blank');
-                }
+                if (now - last < 300) { e.preventDefault(); window.open(label.getAttribute('data-url'), '_blank'); }
                 last = now;
             });
         });
     }
 
-    // 百度联想词 API
+    // 联想词逻辑
     input.addEventListener('input', () => {
         const val = input.value.trim();
         if (!val) { sugBox.style.display = 'none'; return; }
         const s = document.createElement('script');
         s.src = `https://suggestion.baidu.com/su?wd=${encodeURIComponent(val)}&cb=showSug`;
-        document.body.appendChild(s);
-        document.body.removeChild(s);
+        document.body.appendChild(s); document.body.removeChild(s);
     });
 
     window.showSug = (data) => {
@@ -206,10 +212,7 @@
         };
         window.open(urls[engine], '_blank');
     }
-
-    // 键盘回车
     input.onkeydown = (e) => { if(e.key === 'Enter') s(); }
-    // 点击空白处隐藏联想词
     document.onclick = (e) => { if(!e.target.closest('.search-group')) sugBox.style.display = 'none'; }
 </script>
 </body>
