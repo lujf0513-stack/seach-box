@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Search</title>
     
-    <!-- 设置网页图标为 🔍 -->
+    <!-- 🔍 图标 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
 
     <style>
@@ -16,10 +16,19 @@
             --text-main: #1d1d1f;
         }
 
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --glass-bg: rgba(28, 28, 30, 0.75);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --text-main: #ffffff;
+            }
+        }
+
         body {
             margin: 0;
             height: 100vh;
-            font-family: -apple-system, "SF Pro Display", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            /* 经典苹果多色渐变背景 */
             background: radial-gradient(at 0% 0%, #e2eafc 0, transparent 50%), 
                         radial-gradient(at 100% 0%, #f1f1f1 0, transparent 50%), 
                         radial-gradient(at 100% 100%, #e8f1ff 0, transparent 50%), 
@@ -28,26 +37,25 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding-top: 15vh;
+            padding-top: 18vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            width: 90%;
-            max-width: 580px;
-            text-align: center;
-            z-index: 1;
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: radial-gradient(at 0% 0%, #1c1c1e 0, transparent 50%), 
+                            radial-gradient(at 100% 0%, #2c2c2e 0, transparent 50%), 
+                            radial-gradient(at 100% 100%, #000 0, transparent 50%);
+            }
         }
 
+        .container { width: 90%; max-width: 580px; text-align: center; }
+
         h1 {
-            font-size: 64px;
-            font-weight: 200;
-            margin: 0 0 40px 0;
-            letter-spacing: -3px;
-            color: var(--text-main);
-            opacity: 0.9;
-            animation: tracking-in 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            font-size: 64px; font-weight: 200; margin: 0 0 45px 0; letter-spacing: -3px;
+            color: var(--text-main); opacity: 0.9;
+            animation: tracking-in 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) both;
         }
 
         @keyframes tracking-in {
@@ -55,107 +63,50 @@
             100% { letter-spacing: -3px; opacity: 0.9; filter: blur(0); }
         }
 
+        /* 搜索组 */
+        .search-group { position: relative; margin-bottom: 20px; }
         .search-wrapper {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 8px;
-            display: flex;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 20px;
+            background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 8px; display: flex; align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: all 0.3s ease;
         }
-
-        .search-wrapper:focus-within {
-            transform: scale(1.02);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 15px 20px;
-            font-size: 19px;
-            outline: none;
-            color: var(--text-main);
-        }
-
+        .search-wrapper:focus-within { transform: scale(1.01); box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
+        
+        input { flex: 1; border: none; background: transparent; padding: 15px 20px; font-size: 19px; outline: none; color: var(--text-main); }
+        
         .search-btn {
-            background: #1d1d1f;
-            color: white;
-            border: none;
-            padding: 0 28px;
-            border-radius: 18px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
+            background: var(--text-main); color: #fff; border: none; padding: 12px 28px;
+            border-radius: 18px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
         }
+        .search-btn:hover { opacity: 0.85; }
+        .search-btn:active { transform: scale(0.96); }
+        @media (prefers-color-scheme: dark) { .search-btn { background: #f5f5f7; color: #1d1d1f; } }
 
-        .search-btn:hover { background: #000; }
-
-        .engine-tabs {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 16px;
-            padding: 4px;
-            gap: 4px;
-            margin-bottom: 25px;
+        /* 联想建议 */
+        #suggestions {
+            position: absolute; top: 105%; left: 0; width: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1); display: none; list-style: none; padding: 10px 0; margin: 0; text-align: left; z-index: 100;
         }
+        #suggestions li { padding: 12px 25px; font-size: 16px; cursor: pointer; color: var(--text-main); }
+        #suggestions li:hover { background: rgba(120, 120, 128, 0.1); color: var(--apple-blue); }
 
-        .engine-tabs label {
-            padding: 12px 0;
-            font-size: 14px;
-            font-weight: 500;
-            color: #86868b;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 12px;
-            text-align: center;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        /* 引擎切换 */
+        .engine-tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(120, 120, 128, 0.1); border-radius: 16px; padding: 4px; gap: 4px; margin-bottom: 25px; }
+        .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; transition: 0.2s; }
         .engine-tabs input { display: none; }
+        .engine-tabs input:checked + label { color: var(--text-main); background: var(--glass-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 600; }
 
-        .engine-tabs input:checked + label {
-            color: var(--text-main);
-            background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        /* 底部快捷导航与工具 */
-        .shortcuts-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-        }
-
+        /* 底部导航 */
+        .shortcuts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
         .shortcut-item {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 12px 0;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border);
+            border-radius: 18px; padding: 12px 0; text-decoration: none; transition: all 0.3s ease;
+            display: flex; flex-direction: column; align-items: center;
         }
-
-        .shortcut-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-
+        .shortcut-item:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .shortcut-item:active { transform: scale(0.95); }
         .icon { font-size: 22px; margin-bottom: 5px; }
         .label { font-size: 11px; color: #86868b; font-weight: 500; }
     </style>
@@ -165,72 +116,82 @@
 <div class="container">
     <h1>Search</h1>
 
-    <div class="search-wrapper">
-        <input type="text" id="q" placeholder="有什么可以帮到你？" autocomplete="off" autofocus>
-        <button class="search-btn" onclick="s()">搜索</button>
+    <div class="search-group">
+        <div class="search-wrapper">
+            <input type="text" id="q" placeholder="有什么可以帮到你？" autocomplete="off" autofocus>
+            <button class="search-btn" onclick="s()">搜索</button>
+        </div>
+        <ul id="suggestions"></ul>
     </div>
 
     <div class="engine-tabs">
-        <input type="radio" name="e" id="bd" value="bd">
-        <label for="bd" data-url="https://www.baidu.com">Baidu</label>
-
-        <input type="radio" name="e" id="gg" value="gg">
-        <label for="gg" data-url="https://www.google.com">Google</label>
-
-        <input type="radio" name="e" id="gpt" value="gpt">
-        <label for="gpt" data-url="https://chatgpt.com">ChatGPT</label>
-
-        <input type="radio" name="e" id="gm" value="gm">
-        <label for="gm" data-url="https://gemini.google.com">Gemini</label>
+        <input type="radio" name="e" id="bd" value="bd"><label for="bd" data-url="https://www.baidu.com">Baidu</label>
+        <input type="radio" name="e" id="gg" value="gg"><label for="gg" data-url="https://www.google.com">Google</label>
+        <input type="radio" name="e" id="gpt" value="gpt"><label for="gpt" data-url="https://chatgpt.com">ChatGPT</label>
+        <input type="radio" name="e" id="gm" value="gm"><label for="gm" data-url="https://gemini.google.com">Gemini</label>
     </div>
 
-    <!-- 底部功能区域：虫洞传输 + 4个常用网址 -->
     <div class="shortcuts-grid">
         <a href="https://wormhole.app" target="_blank" class="shortcut-item">
-            <span class="icon">🕳️</span>
-            <span class="label">虫洞传输</span>
+            <span class="icon">🕳️</span><span class="label">虫洞传输</span>
         </a>
         <a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank" class="shortcut-item">
-            <span class="icon">☁️</span>
-            <span class="label">宏云ERP</span>
+            <span class="icon">☁️</span><span class="label">宏云ERP</span>
         </a>
         <a href="https://mp.weixin.qq.com" target="_blank" class="shortcut-item">
-            <span class="icon">💬</span>
-            <span class="label">公众号</span>
+            <span class="icon">💬</span><span class="label">公众号</span>
         </a>
         <a href="https://www.xiaohongshu.com/explore" target="_blank" class="shortcut-item">
-            <span class="icon">📕</span>
-            <span class="label">小红书</span>
+            <span class="icon">📕</span><span class="label">小红书</span>
         </a>
         <a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank" class="shortcut-item">
-            <span class="icon">📦</span>
-            <span class="label">嘉立创</span>
+            <span class="icon">📦</span><span class="label">嘉立创</span>
         </a>
     </div>
 </div>
 
 <script>
-    const KEY = 'infinite_pref_v4';
+    const KEY = 'pref_eng_final_stable';
     const input = document.getElementById('q');
-    
-    window.onload = () => {
-        const saved = localStorage.getItem(KEY) || 'gg';
-        const el = document.getElementById(saved);
-        if (el) el.checked = true;
+    const sugBox = document.getElementById('suggestions');
 
+    window.onload = () => {
+        // 加载引擎偏好
+        const saved = localStorage.getItem(KEY) || 'gg';
+        const radio = document.getElementById(saved);
+        if (radio) radio.checked = true;
+
+        // 引擎标签双击逻辑
         document.querySelectorAll('.engine-tabs label').forEach(label => {
-            let lastClickTime = 0;
+            let last = 0;
             label.addEventListener('click', (e) => {
-                const currentTime = new Date().getTime();
-                const timeDiff = currentTime - lastClickTime;
-                if (timeDiff < 300 && timeDiff > 0) {
+                const now = Date.now();
+                if (now - last < 300) {
                     e.preventDefault();
                     window.open(label.getAttribute('data-url'), '_blank');
                 }
-                lastClickTime = currentTime;
+                last = now;
             });
         });
     }
+
+    // 百度联想词 API
+    input.addEventListener('input', () => {
+        const val = input.value.trim();
+        if (!val) { sugBox.style.display = 'none'; return; }
+        const s = document.createElement('script');
+        s.src = `https://suggestion.baidu.com/su?wd=${encodeURIComponent(val)}&cb=showSug`;
+        document.body.appendChild(s);
+        document.body.removeChild(s);
+    });
+
+    window.showSug = (data) => {
+        if (!data.s.length) { sugBox.style.display = 'none'; return; }
+        sugBox.innerHTML = data.s.slice(0, 6).map(t => `<li onclick="fillSug('${t}')">${t}</li>`).join('');
+        sugBox.style.display = 'block';
+    };
+
+    function fillSug(t) { input.value = t; sugBox.style.display = 'none'; s(); }
 
     function s() {
         const txt = input.value.trim();
@@ -246,8 +207,10 @@
         window.open(urls[engine], '_blank');
     }
 
+    // 键盘回车
     input.onkeydown = (e) => { if(e.key === 'Enter') s(); }
+    // 点击空白处隐藏联想词
+    document.onclick = (e) => { if(!e.target.closest('.search-group')) sugBox.style.display = 'none'; }
 </script>
-
 </body>
 </html>
