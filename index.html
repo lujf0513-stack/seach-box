@@ -25,7 +25,7 @@
         body {
             margin: 0;
             height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
             background: radial-gradient(at 0% 0%, #e2eafc 0, transparent 50%), 
                         radial-gradient(at 100% 0%, #f1f1f1 0, transparent 50%), 
                         radial-gradient(at 100% 100%, #e8f1ff 0, transparent 50%), 
@@ -39,7 +39,7 @@
             body { background: radial-gradient(at 0% 0%, #1c1c1e 0, transparent 50%), radial-gradient(at 100% 0%, #2c2c2e 0, transparent 50%), radial-gradient(at 100% 100%, #000 0, transparent 50%); }
         }
 
-        /* 左右挂件强制对齐 */
+        /* 顶部挂件对齐 */
         .widget-item {
             position: fixed; top: 25px;
             background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -51,7 +51,7 @@
             text-decoration: none; transition: 0.3s ease;
         }
 
-        #weather-display { left: 25px; font-size: 15px; font-weight: 500; cursor: pointer; overflow: hidden; }
+        #weather-display { left: 25px; font-size: 15px; font-weight: 500; cursor: pointer; }
         #time-display { right: 25px; font-size: 16px; font-weight: 700; letter-spacing: -0.2px; }
 
         .widget-item:hover { transform: translateY(2px); background: rgba(255, 255, 255, 0.9); }
@@ -59,27 +59,32 @@
         .container { width: 90%; max-width: 580px; text-align: center; }
         h1 { font-size: 72px; font-weight: 200; margin: 0 0 45px 0; letter-spacing: -4px; color: var(--text-main); opacity: 0.9; }
 
+        /* 搜索框 */
         .search-group { position: relative; margin-bottom: 25px; }
         .search-wrapper {
             background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 24px;
-            padding: 8px; display: flex; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            padding: 8px; display: flex; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: 0.4s ease;
         }
+        .search-wrapper:focus-within { transform: scale(1.015); }
         input { flex: 1; border: none; background: transparent; padding: 15px 20px; font-size: 19px; outline: none; color: var(--text-main); }
         .search-btn { background: var(--text-main); color: #fff; border: none; padding: 12px 28px; border-radius: 18px; font-size: 15px; font-weight: 600; cursor: pointer; }
         @media (prefers-color-scheme: dark) { .search-btn { background: #f5f5f7; color: #1d1d1f; } }
 
+        /* 引擎切换 */
         .engine-tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(120, 120, 128, 0.12); border-radius: 16px; padding: 4px; gap: 4px; margin-bottom: 30px; }
-        .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; }
+        .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; transition: 0.2s; }
         .engine-tabs input { display: none; }
         .engine-tabs input:checked + label { color: var(--text-main); background: var(--glass-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
+        /* 快捷导航网格 */
         .shortcuts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
         .shortcut-item {
             background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 14px 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s;
+            border-radius: 20px; padding: 14px 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s ease;
         }
-        .shortcut-item:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.9); }
+        .shortcut-item:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.9); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
 
+        /* 联想词 */
         #suggestions {
             position: absolute; top: 105%; left: 0; width: 100%;
             background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 22px;
@@ -91,10 +96,12 @@
 </head>
 <body>
 
+<!-- 左侧：天气 -->
 <a id="weather-display" class="widget-item" href="https://tianqi.moji.com/weather/china/jiangsu/kunshan" target="_blank">
     🌤️ 22°
 </a>
 
+<!-- 右侧：时间 -->
 <div id="time-display" class="widget-item">00:00</div>
 
 <div class="container">
@@ -106,15 +113,18 @@
         </div>
         <ul id="suggestions"></ul>
     </div>
+
     <div class="engine-tabs">
         <input type="radio" name="e" id="bd" value="bd"><label for="bd" data-url="https://www.baidu.com">Baidu</label>
         <input type="radio" name="e" id="gg" value="gg"><label for="gg" data-url="https://www.google.com">Google</label>
         <input type="radio" name="e" id="gpt" value="gpt"><label for="gpt" data-url="https://chatgpt.com">ChatGPT</label>
         <input type="radio" name="e" id="gm" value="gm"><label for="gm" data-url="https://gemini.google.com">Gemini</label>
     </div>
+
     <div class="shortcuts-grid">
-        <a href="https://wormhole.app" target="_blank" class="shortcut-item">
-            <span style="font-size:24px; margin-bottom:6px">🕳️</span><span style="font-size:11px; color:#86868b; font-weight:600">虫洞传输</span>
+        <!-- 替换为文叔叔 -->
+        <a href="https://www.wenshushu.cn" target="_blank" class="shortcut-item">
+            <span style="font-size:24px; margin-bottom:6px">📩</span><span style="font-size:11px; color:#86868b; font-weight:600">文叔叔</span>
         </a>
         <a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank" class="shortcut-item">
             <span style="font-size:24px; margin-bottom:6px">☁️</span><span style="font-size:11px; color:#86868b; font-weight:600">宏云ERP</span>
@@ -132,7 +142,7 @@
 </div>
 
 <script>
-    const KEY = 'pref_eng_v10_stable';
+    const KEY = 'pref_eng_v11_stable';
     const input = document.getElementById('q');
     const sugBox = document.getElementById('suggestions');
 
@@ -144,23 +154,14 @@
     async function updateWeather() {
         const el = document.getElementById('weather-display');
         try {
-            // 采用纯文本请求
             const res = await fetch(`https://wttr.in/Kunshan?format=%c%t`);
             if (!res.ok) throw new Error();
             let text = await res.text();
-            
-            // 【重要】正则过滤掉所有 HTML 标签和多余文字
-            // 只匹配 Emoji 图标 + 温度数字
+            // 过滤 HTML 乱码
             const cleanText = text.replace(/<[^>]*>/g, '').trim(); 
+            // 匹配图标+温度
             const match = cleanText.match(/[\uD800-\uDBFF][\uDC00-\uDFFF].*?[\d-]+°/);
-            
-            if (match) {
-                el.innerText = match[0];
-            } else {
-                // 如果正则没匹配到，尝试二次保底提取数字
-                const tempMatch = cleanText.match(/[\d-]+°/);
-                el.innerText = tempMatch ? "🌤️ " + tempMatch[0] : "🌤️ 22°";
-            }
+            if (match) el.innerText = match[0];
         } catch (e) {
             el.innerText = "🌤️ 22°";
         }
@@ -182,7 +183,6 @@
         });
     }
 
-    // 联想词逻辑
     input.addEventListener('input', () => {
         const val = input.value.trim();
         if (!val) { sugBox.style.display = 'none'; return; }
