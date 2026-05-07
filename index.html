@@ -6,35 +6,112 @@
     <title>Search</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
     <style>
-        :root { --glass-bg: rgba(255, 255, 255, 0.75); --glass-border: rgba(255, 255, 255, 0.4); --text-main: #1d1d1f; }
-        @media (prefers-color-scheme: dark) { :root { --glass-bg: rgba(28, 28, 30, 0.8); --glass-border: rgba(255, 255, 255, 0.1); --text-main: #ffffff; } }
-        body { margin: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif; background: radial-gradient(at 0% 0%, #e2eafc 0, transparent 50%), radial-gradient(at 100% 0%, #f1f1f1 0, transparent 50%), radial-gradient(at 100% 100%, #e8f1ff 0, transparent 50%), radial-gradient(at 0% 100%, #ffffff 0, transparent 50%); background-attachment: fixed; display: flex; justify-content: center; align-items: flex-start; padding-top: 18vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
-        @media (prefers-color-scheme: dark) { body { background: radial-gradient(at 0% 0%, #1c1c1e 0, transparent 50%), radial-gradient(at 100% 0%, #2c2c2e 0, transparent 50%), radial-gradient(at 100% 100%, #000 0, transparent 50%); } }
-        .widget-item { position: fixed; top: 25px; background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); width: 85px; height: 42px; border-radius: 14px; box-shadow: 0 8px 16px rgba(0,0,0,0.04); color: var(--text-main); z-index: 1000; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s ease; }
-        #weather-display { left: 25px; font-size: 14px; font-weight: 500; cursor: pointer; }
-        #time-display { right: 25px; font-size: 16px; font-weight: 700; letter-spacing: -0.2px; }
-        .widget-item:hover { transform: translateY(2px); background: rgba(255, 255, 255, 0.9); }
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #1d1d1f;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --glass-bg: rgba(28, 28, 30, 0.6);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --text-main: #ffffff;
+            }
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
+            background: radial-gradient(at 0% 0%, #e2eafc 0, transparent 50%), 
+                        radial-gradient(at 100% 0%, #f1f1f1 0, transparent 50%), 
+                        radial-gradient(at 100% 100%, #e8f1ff 0, transparent 50%), 
+                        radial-gradient(at 0% 100%, #ffffff 0, transparent 50%);
+            background-attachment: fixed;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding-top: 18vh; overflow: hidden; -webkit-font-smoothing: antialiased;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { background: radial-gradient(at 0% 0%, #1c1c1e 0, transparent 50%), radial-gradient(at 100% 0%, #2c2c2e 0, transparent 50%), radial-gradient(at 100% 100%, #000 0, transparent 50%); }
+        }
+
+        /* 顶部极致纯净挂件 */
+        .top-nav {
+            position: fixed; top: 30px; left: 30px; right: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000;
+        }
+
+        .widget-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.04);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; color: var(--text-main);
+            width: 85px; height: 42px;
+            transition: 0.3s ease;
+        }
+
+        #weather-display { font-size: 15px; font-weight: 500; cursor: pointer; }
+        #time-display { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+        .widget-item:hover { transform: translateY(2px); background: rgba(255, 255, 255, 0.7); }
+
+        /* 搜索框区域 */
         .container { width: 90%; max-width: 580px; text-align: center; }
         h1 { font-size: 72px; font-weight: 200; margin: 0 0 45px 0; letter-spacing: -4px; color: var(--text-main); opacity: 0.9; }
+        
         .search-group { position: relative; margin-bottom: 25px; }
-        .search-wrapper { background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 8px; display: flex; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: 0.4s ease; }
+        .search-wrapper {
+            background: var(--glass-bg); backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 8px; display: flex; align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        .search-wrapper:focus-within { transform: scale(1.01); background: rgba(255,255,255,0.8); }
         input { flex: 1; border: none; background: transparent; padding: 15px 20px; font-size: 19px; outline: none; color: var(--text-main); }
         .search-btn { background: var(--text-main); color: #fff; border: none; padding: 12px 28px; border-radius: 18px; font-size: 15px; font-weight: 600; cursor: pointer; }
-        .engine-tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(120, 120, 128, 0.12); border-radius: 16px; padding: 4px; gap: 4px; margin-bottom: 30px; }
+        @media (prefers-color-scheme: dark) { .search-btn { background: #f5f5f7; color: #1d1d1f; } }
+
+        /* 搜索引擎切换器 */
+        .engine-tabs {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            background: rgba(120, 120, 128, 0.1); border-radius: 16px;
+            padding: 4px; gap: 4px; margin-bottom: 30px;
+        }
         .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; transition: 0.2s; }
         .engine-tabs input { display: none; }
         .engine-tabs input:checked + label { color: var(--text-main); background: var(--glass-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .shortcuts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
-        .shortcut-item { background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 14px 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s ease; }
-        .shortcut-item:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.9); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
-        #suggestions { position: absolute; top: 105%; left: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 22px; display: none; list-style: none; padding: 10px 0; margin: 0; text-align: left; z-index: 100; }
-        #suggestions li { padding: 14px 25px; font-size: 16px; cursor: pointer; color: var(--text-main); }
+
+        /* 联想建议 */
+        #suggestions {
+            position: absolute; top: 105%; left: 0; width: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 22px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: none; list-style: none; padding: 10px 0; margin: 0; text-align: left; z-index: 100;
+        }
+        #suggestions li { padding: 12px 25px; font-size: 16px; cursor: pointer; color: var(--text-main); }
+        #suggestions li:hover { background: rgba(0,0,0,0.05); }
+
+        /* 快捷图标 */
+        .shortcuts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .shortcut-item {
+            background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border);
+            border-radius: 18px; padding: 12px 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s;
+        }
+        .shortcut-item:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.9); }
+        .shortcut-item span:first-child { font-size: 22px; margin-bottom: 5px; }
+        .shortcut-item span:last-child { font-size: 11px; color: #86868b; font-weight: 600; }
     </style>
 </head>
 <body>
 
-<a id="weather-display" class="widget-item" href="https://tianqi.moji.com/weather/china/jiangsu/kunshan" target="_blank">获取中...</a>
-<div id="time-display" class="widget-item">00:00</div>
+<div class="top-nav">
+    <a id="weather-display" class="widget-item" href="https://tianqi.moji.com/weather/china/jiangsu/kunshan" target="_blank">⏳ ...</a>
+    <div id="time-display" class="widget-item">00:00</div>
+</div>
 
 <div class="container">
     <h1>Search</h1>
@@ -45,24 +122,25 @@
         </div>
         <ul id="suggestions"></ul>
     </div>
+
     <div class="engine-tabs">
         <input type="radio" name="e" id="bd" value="bd"><label for="bd">Baidu</label>
-        <input type="radio" name="e" id="gg" value="gg"><label for="gg">Google</label>
+        <input type="radio" name="e" id="gg" value="gg" checked><label for="gg">Google</label>
         <input type="radio" name="e" id="gpt" value="gpt"><label for="gpt">ChatGPT</label>
         <input type="radio" name="e" id="gm" value="gm"><label for="gm">Gemini</label>
     </div>
+
     <div class="shortcuts-grid">
-        <a href="https://www.wenshushu.cn" target="_blank" class="shortcut-item"><span style="font-size:24px; margin-bottom:6px">📩</span><span style="font-size:11px; color:#86868b; font-weight:600">文叔叔</span></a>
-        <a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank" class="shortcut-item"><span style="font-size:24px; margin-bottom:6px">☁️</span><span style="font-size:11px; color:#86868b; font-weight:600">宏云ERP</span></a>
-        <a href="https://mp.weixin.qq.com" target="_blank" class="shortcut-item"><span style="font-size:24px; margin-bottom:6px">💬</span><span style="font-size:11px; color:#86868b; font-weight:600">公众号</span></a>
-        <a href="https://www.xiaohongshu.com/explore" target="_blank" class="shortcut-item"><span style="font-size:24px; margin-bottom:6px">📕</span><span style="font-size:11px; color:#86868b; font-weight:600">小红书</span></a>
-        <a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank" class="shortcut-item"><span style="font-size:24px; margin-bottom:6px">📦</span><span style="font-size:11px; color:#86868b; font-weight:600">嘉立创</span></a>
+        <a href="https://www.wenshushu.cn" target="_blank" class="shortcut-item"><span>📩</span><span>文叔叔</span></a>
+        <a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank" class="shortcut-item"><span>☁️</span><span>宏云ERP</span></a>
+        <a href="https://mp.weixin.qq.com" target="_blank" class="shortcut-item"><span>💬</span><span>公众号</span></a>
+        <a href="https://www.xiaohongshu.com/explore" target="_blank" class="shortcut-item"><span>📕</span><span>小红书</span></a>
+        <a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank" class="shortcut-item"><span>📦</span><span>嘉立创</span></a>
     </div>
 </div>
 
 <script>
-    const KEY_NAME = 'pref_eng_v16_mykey';
-    const AMAP_KEY = '332f5b64fc814a3ded62a85df1f26d6d'; // 你的私有Key
+    const AMAP_KEY = '332f5b64fc814a3ded62a85df1f26d6d';
     const input = document.getElementById('q');
     const sugBox = document.getElementById('suggestions');
 
@@ -73,20 +151,55 @@
 
     async function updateWeather() {
         const el = document.getElementById('weather-display');
-        const icons = { "晴": "☀️", "多云": "🌤️", "阴": "☁️", "雨": "🌧️", "大雨": "🌧️", "中雨": "🌧️", "小雨": "🌧️", "雷阵雨": "⛈️", "雪": "❄️" };
+        const icons = { "晴": "☀️", "多云": "🌤️", "阴": "☁️", "雨": "🌧️", "雷阵雨": "⛈️", "雪": "❄️" };
         try {
             const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?city=320583&key=${AMAP_KEY}`);
             const data = await res.json();
-            if (data.status === "1" && data.lives && data.lives.length > 0) {
+            if (data.status === "1" && data.lives.length > 0) {
                 const live = data.lives[0];
                 const icon = icons[live.weather] || "🌤️";
                 el.innerText = `${icon} ${live.temperature}°`;
-            } else { throw new Error(); }
-        } catch (e) {
-            el.innerText = "🌤️ 获取中";
-        }
+            }
+        } catch (e) { el.innerText = "🌤️ --°"; }
     }
 
     window.onload = () => {
-        const saved = localStorage.getItem(KEY_NAME) || 'gg';
-        if (document.
+        updateTime(); setInterval(updateTime, 1000);
+        updateWeather(); setInterval(updateWeather, 1800000);
+    };
+
+    // 联想建议逻辑
+    input.addEventListener('input', () => {
+        const val = input.value.trim();
+        if (!val) { sugBox.style.display = 'none'; return; }
+        const s = document.createElement('script');
+        s.src = `https://suggestion.baidu.com/su?wd=${encodeURIComponent(val)}&cb=showSug`;
+        document.body.appendChild(s); document.body.removeChild(s);
+    });
+
+    window.showSug = (data) => {
+        if (!data.s.length) { sugBox.style.display = 'none'; return; }
+        sugBox.innerHTML = data.s.slice(0, 6).map(t => `<li onclick="fillSug('${t}')">${t}</li>`).join('');
+        sugBox.style.display = 'block';
+    };
+
+    function fillSug(t) { input.value = t; sugBox.style.display = 'none'; s(); }
+
+    function s() {
+        const txt = input.value.trim();
+        if(!txt) return;
+        const engine = document.querySelector('input[name="e"]:checked').id;
+        const urls = { 
+            bd: `https://www.baidu.com/s?wd=${encodeURIComponent(txt)}`, 
+            gg: `https://www.google.com/search?q=${encodeURIComponent(txt)}`, 
+            gpt: `https://chatgpt.com/?q=${encodeURIComponent(txt)}`, 
+            gm: `https://gemini.google.com/app?q=${encodeURIComponent(txt)}` 
+        };
+        window.open(urls[engine], '_blank');
+    }
+
+    input.onkeydown = (e) => { if(e.key === 'Enter') s(); }
+    document.onclick = (e) => { if(!e.target.closest('.search-group')) sugBox.style.display = 'none'; }
+</script>
+</body>
+</html>
