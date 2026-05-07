@@ -6,104 +6,46 @@
     <title>Search</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
     <style>
-        :root {
-            --glass-bg: rgba(255, 255, 255, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.4);
-            --text-main: #1d1d1f;
+        :root { 
+            --glass-bg: rgba(255, 255, 255, 0.5); 
+            --glass-border: rgba(255, 255, 255, 0.4); 
+            --text-main: #1d1d1f; 
+            --bg-color-1: #e2eafc; --bg-color-2: #f1f1f1; --bg-color-3: #e8f1ff; --bg-color-4: #ffffff;
+        }
+        @media (prefers-color-scheme: dark) { :root { --glass-bg: rgba(28, 28, 30, 0.6); --glass-border: rgba(255, 255, 255, 0.1); --text-main: #ffffff; } }
+
+        body { 
+            margin: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif; 
+            /* 动态渐变背景：由 JS 控制变量 */
+            background: radial-gradient(at 0% 0%, var(--bg-color-1) 0, transparent 50%), 
+                        radial-gradient(at 100% 0%, var(--bg-color-2) 0, transparent 50%), 
+                        radial-gradient(at 100% 100%, var(--bg-color-3) 0, transparent 50%), 
+                        radial-gradient(at 0% 100%, var(--bg-color-4) 0, transparent 50%);
+            background-attachment: fixed; 
+            display: flex; justify-content: center; align-items: flex-start; padding-top: 18vh; overflow: hidden; -webkit-font-smoothing: antialiased;
+            transition: all 1.5s ease-in-out; /* 背景切换平滑过渡 */
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --glass-bg: rgba(28, 28, 30, 0.6);
-                --glass-border: rgba(255, 255, 255, 0.1);
-                --text-main: #ffffff;
-            }
-        }
-
-        body {
-            margin: 0;
-            height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
-            background: radial-gradient(at 0% 0%, #e2eafc 0, transparent 50%), 
-                        radial-gradient(at 100% 0%, #f1f1f1 0, transparent 50%), 
-                        radial-gradient(at 100% 100%, #e8f1ff 0, transparent 50%), 
-                        radial-gradient(at 0% 100%, #ffffff 0, transparent 50%);
-            background-attachment: fixed;
-            display: flex; justify-content: center; align-items: flex-start;
-            padding-top: 18vh; overflow: hidden; -webkit-font-smoothing: antialiased;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body { background: radial-gradient(at 0% 0%, #1c1c1e 0, transparent 50%), radial-gradient(at 100% 0%, #2c2c2e 0, transparent 50%), radial-gradient(at 100% 100%, #000 0, transparent 50%); }
-        }
-
-        /* 顶部极致纯净挂件 */
-        .top-nav {
-            position: fixed; top: 30px; left: 30px; right: 30px;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000;
-        }
-
-        .widget-item {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.04);
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none; color: var(--text-main);
-            width: 85px; height: 42px;
-            transition: 0.3s ease;
-        }
-
+        .top-nav { position: fixed; top: 30px; left: 30px; right: 30px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        .widget-item { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 18px; box-shadow: 0 8px 16px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text-main); width: 85px; height: 42px; transition: 0.3s ease; }
         #weather-display { font-size: 15px; font-weight: 500; cursor: pointer; }
         #time-display { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
-        .widget-item:hover { transform: translateY(2px); background: rgba(255, 255, 255, 0.7); }
-
-        /* 搜索框区域 */
         .container { width: 90%; max-width: 580px; text-align: center; }
         h1 { font-size: 72px; font-weight: 200; margin: 0 0 45px 0; letter-spacing: -4px; color: var(--text-main); opacity: 0.9; }
-        
         .search-group { position: relative; margin-bottom: 25px; }
-        .search-wrapper {
-            background: var(--glass-bg); backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border); border-radius: 24px;
-            padding: 8px; display: flex; align-items: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: 0.3s;
-        }
-        .search-wrapper:focus-within { transform: scale(1.01); background: rgba(255,255,255,0.8); }
+        .search-wrapper { background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 8px; display: flex; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); transition: 0.3s; }
         input { flex: 1; border: none; background: transparent; padding: 15px 20px; font-size: 19px; outline: none; color: var(--text-main); }
         .search-btn { background: var(--text-main); color: #fff; border: none; padding: 12px 28px; border-radius: 18px; font-size: 15px; font-weight: 600; cursor: pointer; }
         @media (prefers-color-scheme: dark) { .search-btn { background: #f5f5f7; color: #1d1d1f; } }
-
-        /* 搜索引擎切换器 */
-        .engine-tabs {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            background: rgba(120, 120, 128, 0.1); border-radius: 16px;
-            padding: 4px; gap: 4px; margin-bottom: 30px;
-        }
-        .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; transition: 0.2s; }
+        .engine-tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(120, 120, 128, 0.1); border-radius: 16px; padding: 4px; gap: 4px; margin-bottom: 30px; }
+        .engine-tabs label { padding: 12px 0; font-size: 14px; font-weight: 500; color: #86868b; cursor: pointer; border-radius: 12px; text-align: center; transition: 0.2s; user-select: none; }
         .engine-tabs input { display: none; }
         .engine-tabs input:checked + label { color: var(--text-main); background: var(--glass-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-
-        /* 联想建议 */
-        #suggestions {
-            position: absolute; top: 105%; left: 0; width: 100%;
-            background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 22px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: none; list-style: none; padding: 10px 0; margin: 0; text-align: left; z-index: 100;
-        }
+        #suggestions { position: absolute; top: 105%; left: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 22px; display: none; list-style: none; padding: 10px 0; margin: 0; text-align: left; z-index: 100; }
         #suggestions li { padding: 12px 25px; font-size: 16px; cursor: pointer; color: var(--text-main); }
-        #suggestions li:hover { background: rgba(0,0,0,0.05); }
-
-        /* 快捷图标 */
         .shortcuts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-        .shortcut-item {
-            background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border);
-            border-radius: 18px; padding: 12px 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s;
-        }
-        .shortcut-item:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.9); }
-        .shortcut-item span:first-child { font-size: 22px; margin-bottom: 5px; }
-        .shortcut-item span:last-child { font-size: 11px; color: #86868b; font-weight: 600; }
+        .shortcut-item { background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 18px; padding: 12px 0; text-decoration: none; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+        .shortcut-item span:last-child { font-size: 11px; color: #86868b; font-weight: 600; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -149,6 +91,29 @@
         document.getElementById('time-display').innerText = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
     }
 
+    // 设置主题色：根据天气关键词
+    function setTheme(weather) {
+        const root = document.documentElement;
+        let colors = [];
+        
+        if (weather.includes("晴")) {
+            colors = ["#e2eafc", "#fff9db", "#e8f1ff", "#ffffff"]; // 温暖蓝黄
+        } else if (weather.includes("云")) {
+            colors = ["#e2eafc", "#f1f1f1", "#e8f1ff", "#ffffff"]; // 标准苹果灰蓝
+        } else if (weather.includes("阴")) {
+            colors = ["#cfd9df", "#e2ebf0", "#ececec", "#f5f7fa"]; // 阴影灰
+        } else if (weather.includes("雨") || weather.includes("雪")) {
+            colors = ["#a1c4fd", "#c2e9fb", "#d1d6e6", "#e1eec3"]; // 冷色调
+        } else {
+            colors = ["#e2eafc", "#f1f1f1", "#e8f1ff", "#ffffff"]; // 默认
+        }
+
+        root.style.setProperty('--bg-color-1', colors[0]);
+        root.style.setProperty('--bg-color-2', colors[1]);
+        root.style.setProperty('--bg-color-3', colors[2]);
+        root.style.setProperty('--bg-color-4', colors[3]);
+    }
+
     async function updateWeather() {
         const el = document.getElementById('weather-display');
         const icons = { "晴": "☀️", "多云": "🌤️", "阴": "☁️", "雨": "🌧️", "雷阵雨": "⛈️", "雪": "❄️" };
@@ -157,8 +122,8 @@
             const data = await res.json();
             if (data.status === "1" && data.lives.length > 0) {
                 const live = data.lives[0];
-                const icon = icons[live.weather] || "🌤️";
-                el.innerText = `${icon} ${live.temperature}°`;
+                el.innerText = `${icons[live.weather] || "🌤️"} ${live.temperature}°`;
+                setTheme(live.weather); // 调用换色引擎
             }
         } catch (e) { el.innerText = "🌤️ --°"; }
     }
@@ -166,6 +131,17 @@
     window.onload = () => {
         updateTime(); setInterval(updateTime, 1000);
         updateWeather(); setInterval(updateWeather, 1800000);
+
+        // 恢复双击逻辑
+        const engineUrls = { bd: 'https://www.baidu.com', gg: 'https://www.google.com', gpt: 'https://chatgpt.com', gm: 'https://gemini.google.com' };
+        document.querySelectorAll('.engine-tabs label').forEach(label => {
+            let last = 0;
+            label.addEventListener('click', (e) => {
+                const now = Date.now();
+                if (now - last < 300) { e.preventDefault(); window.open(engineUrls[label.getAttribute('for')], '_blank'); }
+                last = now;
+            });
+        });
     };
 
     // 联想建议逻辑
@@ -176,28 +152,18 @@
         s.src = `https://suggestion.baidu.com/su?wd=${encodeURIComponent(val)}&cb=showSug`;
         document.body.appendChild(s); document.body.removeChild(s);
     });
-
     window.showSug = (data) => {
         if (!data.s.length) { sugBox.style.display = 'none'; return; }
         sugBox.innerHTML = data.s.slice(0, 6).map(t => `<li onclick="fillSug('${t}')">${t}</li>`).join('');
         sugBox.style.display = 'block';
     };
-
     function fillSug(t) { input.value = t; sugBox.style.display = 'none'; s(); }
-
     function s() {
-        const txt = input.value.trim();
-        if(!txt) return;
+        const txt = input.value.trim(); if(!txt) return;
         const engine = document.querySelector('input[name="e"]:checked').id;
-        const urls = { 
-            bd: `https://www.baidu.com/s?wd=${encodeURIComponent(txt)}`, 
-            gg: `https://www.google.com/search?q=${encodeURIComponent(txt)}`, 
-            gpt: `https://chatgpt.com/?q=${encodeURIComponent(txt)}`, 
-            gm: `https://gemini.google.com/app?q=${encodeURIComponent(txt)}` 
-        };
+        const urls = { bd: `https://www.baidu.com/s?wd=${encodeURIComponent(txt)}`, gg: `https://www.google.com/search?q=${encodeURIComponent(txt)}`, gpt: `https://chatgpt.com/?q=${encodeURIComponent(txt)}`, gm: `https://gemini.google.com/app?q=${encodeURIComponent(txt)}` };
         window.open(urls[engine], '_blank');
     }
-
     input.onkeydown = (e) => { if(e.key === 'Enter') s(); }
     document.onclick = (e) => { if(!e.target.closest('.search-group')) sugBox.style.display = 'none'; }
 </script>
