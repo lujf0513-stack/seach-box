@@ -641,20 +641,12 @@
         return isMorning ? 'forward' : 'reverse';
     }
 
-    function setWidgetTooltip(lines) {
-        weatherDisplay.setAttribute('data-tip', lines.filter(Boolean).join('\n'));
+    function setWidgetTooltip(text) {
+        weatherDisplay.setAttribute('data-tip', text);
     }
 
     function syncWidgetTooltip(statusText = '') {
-        const routeText = widgetSettings.commuteStart && widgetSettings.commuteEnd
-            ? `${widgetSettings.commuteStart} -> ${widgetSettings.commuteEnd}`
-            : '未设置通勤路线';
-        setWidgetTooltip([
-            `区域天气: ${widgetSettings.weatherRegion}`,
-            `通勤路线: ${routeText}`,
-            `通勤方式: ${transportLabel(widgetSettings.transportMode)}`,
-            statusText || '单击切换天气/通勤，双击打开设置'
-        ]);
+        setWidgetTooltip(statusText || '单击切换天气/通勤\n双击打开设置');
     }
 
     function transportLabel(mode) {
@@ -803,6 +795,11 @@
     async function renderWidget(force = false) {
         const currentView = widgetSettings.widgetView;
         if (currentView === 'commute') {
+            if (!widgetSettings.commuteStartLocation || !widgetSettings.commuteEndLocation) {
+                weatherDisplay.innerText = '设置通勤';
+                syncWidgetTooltip('请双击设置通勤起点和终点');
+                return;
+            }
             try {
                 const route = await fetchRoute(force);
                 weatherDisplay.innerText = route.label;
