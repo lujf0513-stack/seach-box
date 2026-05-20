@@ -7,14 +7,18 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
     <style>
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.42);
+            --glass-border: rgba(255, 255, 255, 0.34);
             --text-main: #1d1d1f;
             --muted: #6b7280;
             --bg-color-1: #e2eafc;
             --bg-color-2: #f1f1f1;
             --bg-color-3: #e8f1ff;
             --bg-color-4: #ffffff;
+            --weather-overlay: rgba(255, 255, 255, 0.2);
+            --weather-glow-1: rgba(255, 255, 255, 0.34);
+            --weather-glow-2: rgba(255, 255, 255, 0.18);
+            --weather-shadow: rgba(15, 23, 42, 0.08);
         }
 
         @media (prefers-color-scheme: dark) {
@@ -23,18 +27,23 @@
                 --glass-border: rgba(255, 255, 255, 0.1);
                 --text-main: #ffffff;
                 --muted: rgba(255, 255, 255, 0.65);
+                --weather-glow-1: rgba(255, 255, 255, 0.08);
+                --weather-glow-2: rgba(255, 255, 255, 0.04);
+                --weather-shadow: rgba(0, 0, 0, 0.28);
             }
         }
 
         body {
+            position: relative;
             margin: 0;
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
             background:
-                radial-gradient(at 0% 0%, var(--bg-color-1) 0, transparent 50%),
-                radial-gradient(at 100% 0%, var(--bg-color-2) 0, transparent 50%),
-                radial-gradient(at 100% 100%, var(--bg-color-3) 0, transparent 50%),
-                radial-gradient(at 0% 100%, var(--bg-color-4) 0, transparent 50%);
+                radial-gradient(circle at 14% 16%, var(--bg-color-1) 0, transparent 34%),
+                radial-gradient(circle at 82% 18%, var(--bg-color-2) 0, transparent 36%),
+                radial-gradient(circle at 84% 84%, var(--bg-color-3) 0, transparent 34%),
+                radial-gradient(circle at 12% 88%, var(--bg-color-4) 0, transparent 36%),
+                linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08));
             background-attachment: fixed;
             display: flex;
             justify-content: center;
@@ -42,7 +51,38 @@
             padding-top: 18vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
-            transition: background 1.5s ease-in-out;
+            transition: background 1.5s ease-in-out, filter 1s ease-in-out;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            background:
+                linear-gradient(180deg, var(--weather-overlay), rgba(255, 255, 255, 0.06)),
+                radial-gradient(circle at 18% 14%, var(--weather-glow-1), transparent 34%),
+                radial-gradient(circle at 78% 22%, var(--weather-glow-2), transparent 30%),
+                radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.16), transparent 42%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 56%);
+            mix-blend-mode: soft-light;
+            backdrop-filter: blur(6px) saturate(1.08);
+            -webkit-backdrop-filter: blur(6px) saturate(1.08);
+            z-index: -1;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 48%, var(--weather-shadow) 100%);
+            opacity: 0.9;
+            z-index: -1;
         }
 
         .top-nav {
@@ -62,7 +102,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 18px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -77,7 +117,7 @@
 
         .widget-item:hover {
             transform: translateY(-1px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
         }
 
         .weather-trigger {
@@ -157,7 +197,7 @@
             padding: 8px;
             display: flex;
             align-items: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 24px 56px rgba(15, 23, 42, 0.1);
             transition: 0.3s;
         }
 
@@ -236,7 +276,7 @@
             text-align: left;
             z-index: 100;
             border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 20px 42px rgba(15, 23, 42, 0.1);
         }
 
         #suggestions li {
@@ -254,6 +294,7 @@
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 12px;
+            position: relative;
         }
 
         .shortcut-item {
@@ -267,6 +308,7 @@
             flex-direction: column;
             align-items: center;
             transition: 0.3s;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
         }
 
         .shortcut-item span:last-child {
@@ -274,6 +316,128 @@
             color: #86868b;
             font-weight: 600;
             margin-top: 5px;
+        }
+
+        .shortcut-item.dropdown-wrapper {
+            padding: 0;
+            position: relative;
+        }
+
+        .dropdown-wrapper .dropdown-toggle {
+            width: 100%;
+            height: 100%;
+            padding: 12px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: inherit;
+            color: inherit;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            appearance: none;
+            transition: transform 0.22s ease, filter 0.22s ease;
+        }
+
+        .dropdown-wrapper .dropdown-toggle span {
+            margin: 0;
+        }
+
+        .dropdown-wrapper .dropdown-toggle span:first-child {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        .dropdown-wrapper .dropdown-toggle span:last-child {
+            font-size: 11px;
+            color: #86868b;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .dropdown-wrapper.is-open .dropdown-toggle {
+            transform: translateY(-1px);
+            filter: saturate(1.04);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px) scale(0.98);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 22px;
+            padding: 14px;
+            list-style: none;
+            margin: 0;
+            width: min(680px, calc(100vw - 36px));
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 8px;
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform-origin: top center;
+            transition: opacity 0.24s ease, transform 0.28s ease, visibility 0.28s ease;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .dropdown-menu li {
+            margin: 0;
+            min-width: 0;
+        }
+
+        .dropdown-menu li a {
+            width: 100%;
+            min-height: 72px;
+            box-sizing: border-box;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 12px 0;
+            color: var(--text-main);
+            text-align: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+            transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .dropdown-menu li a:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
+        }
+
+        .dropdown-menu .menu-icon {
+            font-size: 24px;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .dropdown-menu .menu-label {
+            font-size: 11px;
+            line-height: 1.35;
+            font-weight: 600;
+            color: #86868b;
+            word-break: break-word;
+            padding: 0 4px;
         }
 
         .settings-modal {
@@ -303,7 +467,7 @@
             border: 1px solid var(--glass-border);
             border-radius: 28px;
             padding: 24px;
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+            box-shadow: 0 26px 70px rgba(15, 23, 42, 0.18);
             text-align: left;
             color: var(--text-main);
         }
@@ -453,6 +617,13 @@
                 grid-template-columns: repeat(3, 1fr);
             }
 
+            .dropdown-menu {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                width: min(520px, calc(100vw - 24px));
+                padding: 12px;
+                gap: 8px;
+            }
+
             .weather-trigger::after {
                 left: auto;
                 right: 0;
@@ -484,12 +655,87 @@
         <input type="radio" name="e" id="gm" value="gm"><label for="gm">Gemini</label>
     </div>
 
-    <div class="shortcuts-grid">
-        <a href="https://www.wenshushu.cn" target="_blank" class="shortcut-item"><span>📩</span><span>文叔叔</span></a>
-        <a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank" class="shortcut-item"><span>☁️</span><span>宏云ERP</span></a>
-        <a href="https://mp.weixin.qq.com" target="_blank" class="shortcut-item"><span>💬</span><span>公众号</span></a>
-        <a href="https://www.xiaohongshu.com/explore" target="_blank" class="shortcut-item"><span>📕</span><span>小红书</span></a>
-        <a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank" class="shortcut-item"><span>📦</span><span>嘉立创</span></a>
+    <div class="shortcuts-section">
+        <div class="shortcuts-grid">
+            <div class="shortcut-item dropdown-wrapper">
+                <button type="button" class="dropdown-toggle" id="tools-btn">
+                    <span>🛠️</span>
+                    <span>专业工具</span>
+                </button>
+                <ul class="dropdown-menu" id="tools-menu">
+                    <li><a href="https://iot.mi.com/" target="_blank"><span class="menu-icon">💡</span><span class="menu-label">小米IOT</span></a></li>
+                    <li><a href="https://www.tuya.com/cn/" target="_blank"><span class="menu-icon">🤖</span><span class="menu-label">涂鸦IOT</span></a></li>
+                    <li><a href="https://hotel.beancomm.net/man/login?redirect=%2Fhotel%2Ftype-detail%2F97803" target="_blank"><span class="menu-icon">📡</span><span class="menu-label">翼数IOT</span></a></li>
+                    <li><a href="https://iot-admin-dev.homycloud.com/#/login" target="_blank"><span class="menu-icon">🌥️</span><span class="menu-label">宏云IOT</span></a></li>
+                    <li><a href="https://www.semiee.com/" target="_blank"><span class="menu-icon">🔌</span><span class="menu-label">半导小芯</span></a></li>
+                    <li><a href="https://www.szlcsc.com/?c=Z" target="_blank"><span class="menu-icon">🛒</span><span class="menu-label">立创商城</span></a></li>
+                    <li><a href="https://www.patent9.com/" target="_blank"><span class="menu-icon">🧾</span><span class="menu-label">专利在线</span></a></li>
+                    <li><a href="https://www.processon.com/" target="_blank"><span class="menu-icon">🗺️</span><span class="menu-label">流程图设计</span></a></li>
+                    <li><a href="https://www.wenshushu.cn/" target="_blank"><span class="menu-icon">📩</span><span class="menu-label">文叔叔</span></a></li>
+                </ul>
+            </div>
+            <div class="shortcut-item dropdown-wrapper">
+                <button type="button" class="dropdown-toggle" id="work-btn">
+                    <span>💼</span>
+                    <span>工作办公</span>
+                </button>
+                <ul class="dropdown-menu" id="work-menu">
+                    <li><a href="https://github.com/" target="_blank"><span class="menu-icon">🐙</span><span class="menu-label">GITHUB</span></a></li>
+                    <li><a href="https://tower.im/teams/12f6ecbf7dbea522601a7e3f31fb2c91/projects/" target="_blank"><span class="menu-icon">🗂️</span><span class="menu-label">TOWER</span></a></li>
+                    <li><a href="https://mailh.qiye.163.com/static/sirius-web/?version=1730183458773/#mailbox" target="_blank"><span class="menu-icon">📧</span><span class="menu-label">宏云邮箱</span></a></li>
+                    <li><a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank"><span class="menu-icon">☁️</span><span class="menu-label">宏云ERP</span></a></li>
+                    <li><a href="https://lujf0513-stack.github.io/voice-tool/" target="_blank"><span class="menu-icon">🎙️</span><span class="menu-label">语音修改工具</span></a></li>
+                    <li><a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank"><span class="menu-icon">📦</span><span class="menu-label">思辰微ERP</span></a></li>
+                    <li><a href="https://mp.weixin.qq.com/cgi-bin/home?t=home/index&token=1123876535&lang=zh_CN" target="_blank"><span class="menu-icon">💬</span><span class="menu-label">思辰微公众号</span></a></li>
+                </ul>
+            </div>
+            <div class="shortcut-item dropdown-wrapper">
+                <button type="button" class="dropdown-toggle" id="life-btn">
+                    <span>🛍️</span>
+                    <span>生活购物</span>
+                </button>
+                <ul class="dropdown-menu" id="life-menu">
+                    <li><a href="https://www.taobao.com/" target="_blank"><span class="menu-icon">🛒</span><span class="menu-label">淘宝</span></a></li>
+                    <li><a href="https://www.jd.com/" target="_blank"><span class="menu-icon">📦</span><span class="menu-label">京东</span></a></li>
+                    <li><a href="https://www.zhihu.com/" target="_blank"><span class="menu-icon">💡</span><span class="menu-label">知乎</span></a></li>
+                    <li><a href="https://www.xiaohongshu.com/explore" target="_blank"><span class="menu-icon">📕</span><span class="menu-label">小红书</span></a></li>
+                    <li><a href="https://www.youku.com/ku/webhome" target="_blank"><span class="menu-icon">🎬</span><span class="menu-label">优酷</span></a></li>
+                    <li><a href="https://v.qq.com/" target="_blank"><span class="menu-icon">📺</span><span class="menu-label">腾讯</span></a></li>
+                    <li><a href="https://www.bilibili.com/?spm_id_from=333.788.0.0" target="_blank"><span class="menu-icon">📹</span><span class="menu-label">BiliBili</span></a></li>
+                    <li><a href="https://www.youtube.com/" target="_blank"><span class="menu-icon">▶️</span><span class="menu-label">YouTube</span></a></li>
+                </ul>
+            </div>
+            <div class="shortcut-item dropdown-wrapper">
+                <button type="button" class="dropdown-toggle" id="forum-btn">
+                    <span>📚</span>
+                    <span>专业论坛</span>
+                </button>
+                <ul class="dropdown-menu" id="forum-menu">
+                    <li><a href="https://www.cnki.net/?PlatForm=kns&UID=WEEvREcwSlJHSldTTEYzVDhUQ05ZSjI4alNqUlZYYkxZUTJPeGNWOC9LOD0%3D%249A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!" target="_blank"><span class="menu-icon">📖</span><span class="menu-label">知网</span></a></li>
+                    <li><a href="https://www.csdn.net/" target="_blank"><span class="menu-icon">💻</span><span class="menu-label">CSDN</span></a></li>
+                    <li><a href="https://bbs.21ic.com/" target="_blank"><span class="menu-icon">🔧</span><span class="menu-label">21IC</span></a></li>
+                    <li><a href="https://bbs.eda365.com/forum-4-1.html" target="_blank"><span class="menu-icon">🧩</span><span class="menu-label">EDA365</span></a></li>
+                    <li><a href="https://bbs.elecfans.com/" target="_blank"><span class="menu-icon">⚡</span><span class="menu-label">电子技术</span></a></li>
+                    <li><a href="https://www.firebbs.cn/forum.php" target="_blank"><span class="menu-icon">🔥</span><span class="menu-label">野火论坛</span></a></li>
+
+                </ul>
+            </div>
+            <div class="shortcut-item dropdown-wrapper">
+                <button type="button" class="dropdown-toggle" id="other-btn">
+                    <span>🧭</span>
+                    <span>其他综合</span>
+                </button>
+                <ul class="dropdown-menu" id="other-menu">
+                    <li><a href="https://www.12306.cn/index/" target="_blank"><span class="menu-icon">🚄</span><span class="menu-label">12306</span></a></li>
+                    <li><a href="https://js.122.gov.cn/?captcha=XGPL&fdjh=035563&hphm=%E8%8B%8FE3Q5C7&hpzl=02&qm=wf#/inquiry" target="_blank"><span class="menu-icon">🚗</span><span class="menu-label">违章查询</span></a></li>
+                    <li><a href="https://www.chinatax.gov.cn/chinatax/index.html" target="_blank"><span class="menu-icon">🧾</span><span class="menu-label">国家税务局</span></a></li>
+                    <li><a href="https://www.zhaopin.com/" target="_blank"><span class="menu-icon">💼</span><span class="menu-label">智联招聘</span></a></li>
+                    <li><a href="https://www.51job.com/" target="_blank"><span class="menu-icon">📄</span><span class="menu-label">前程无忧</span></a></li>
+                    <li><a href="https://www.liepin.com/?loginBackUrl=https%3A%2F%2Fc.liepin.com%2F%3Ftime%3D1534231843291" target="_blank"><span class="menu-icon">🎯</span><span class="menu-label">猎聘网</span></a></li>
+                    <li><a href="https://www.zhipin.com/nanjing/?sid=sem_pz_bdpc_dasou_title" target="_blank"><span class="menu-icon">🗣️</span><span class="menu-label">Boss直聘</span></a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -603,26 +849,130 @@
         localStorage.setItem(WIDGET_SETTINGS_STORAGE_KEY, JSON.stringify(widgetSettings));
     }
 
+    function resolveWeatherVisual(weather = '') {
+        const value = String(weather).trim();
+
+        if (!value) {
+            return {
+                icon: '🌤️',
+                theme: ['#e2eafc', '#f1f1f1', '#e8f1ff', '#ffffff'],
+                overlay: 'rgba(255, 255, 255, 0.18)',
+                glow1: 'rgba(255, 255, 255, 0.34)',
+                glow2: 'rgba(255, 255, 255, 0.18)',
+                shadow: 'rgba(15, 23, 42, 0.08)'
+            };
+        }
+
+        if (value.includes('雷')) {
+            return {
+                icon: '⛈️',
+                theme: ['#7f8fa6', '#b2bec3', '#c8d6e5', '#dfe6e9'],
+                overlay: 'rgba(20, 28, 45, 0.28)',
+                glow1: 'rgba(255, 255, 255, 0.12)',
+                glow2: 'rgba(173, 216, 255, 0.1)',
+                shadow: 'rgba(15, 23, 42, 0.18)'
+            };
+        }
+
+        if (value.includes('雪') || value.includes('冰') || value.includes('冻')) {
+            return {
+                icon: '❄️',
+                theme: ['#dfe9f3', '#ffffff', '#d6e4f0', '#eef5ff'],
+                overlay: 'rgba(255, 255, 255, 0.22)',
+                glow1: 'rgba(255, 255, 255, 0.38)',
+                glow2: 'rgba(220, 235, 255, 0.24)',
+                shadow: 'rgba(148, 163, 184, 0.1)'
+            };
+        }
+
+        if (value.includes('雨')) {
+            return {
+                icon: '🌧️',
+                theme: ['#a1c4fd', '#c2e9fb', '#d1d6e6', '#e1eec3'],
+                overlay: 'rgba(210, 224, 244, 0.16)',
+                glow1: 'rgba(255, 255, 255, 0.18)',
+                glow2: 'rgba(191, 219, 254, 0.14)',
+                shadow: 'rgba(71, 85, 105, 0.14)'
+            };
+        }
+
+        if (value.includes('雾') || value.includes('霾') || value.includes('尘') || value.includes('沙')) {
+            return {
+                icon: '🌫️',
+                theme: ['#d7d2cc', '#ece9e6', '#d3cce3', '#e9e4f0'],
+                overlay: 'rgba(244, 240, 236, 0.24)',
+                glow1: 'rgba(255, 255, 255, 0.2)',
+                glow2: 'rgba(255, 255, 255, 0.12)',
+                shadow: 'rgba(120, 113, 108, 0.12)'
+            };
+        }
+
+        if (value.includes('阴')) {
+            return {
+                icon: '☁️',
+                theme: ['#cfd9df', '#e2ebf0', '#ececec', '#f5f7fa'],
+                overlay: 'rgba(236, 241, 245, 0.2)',
+                glow1: 'rgba(255, 255, 255, 0.24)',
+                glow2: 'rgba(255, 255, 255, 0.12)',
+                shadow: 'rgba(100, 116, 139, 0.12)'
+            };
+        }
+
+        if (value.includes('云')) {
+            return {
+                icon: '🌤️',
+                theme: ['#e2eafc', '#f1f1f1', '#e8f1ff', '#ffffff'],
+                overlay: 'rgba(255, 255, 255, 0.18)',
+                glow1: 'rgba(255, 255, 255, 0.32)',
+                glow2: 'rgba(226, 232, 240, 0.16)',
+                shadow: 'rgba(15, 23, 42, 0.08)'
+            };
+        }
+
+        if (value.includes('晴')) {
+            return {
+                icon: '☀️',
+                theme: ['#e2eafc', '#fff9db', '#e8f1ff', '#ffffff'],
+                overlay: 'rgba(255, 248, 214, 0.12)',
+                glow1: 'rgba(255, 255, 255, 0.42)',
+                glow2: 'rgba(255, 236, 179, 0.2)',
+                shadow: 'rgba(251, 191, 36, 0.08)'
+            };
+        }
+
+        if (value.includes('风')) {
+            return {
+                icon: '💨',
+                theme: ['#d4fc79', '#96e6a1', '#d7f8e3', '#f5fffa'],
+                overlay: 'rgba(228, 250, 234, 0.14)',
+                glow1: 'rgba(255, 255, 255, 0.3)',
+                glow2: 'rgba(187, 247, 208, 0.18)',
+                shadow: 'rgba(34, 197, 94, 0.08)'
+            };
+        }
+
+        return {
+            icon: '🌤️',
+            theme: ['#e2eafc', '#f1f1f1', '#e8f1ff', '#ffffff'],
+            overlay: 'rgba(255, 255, 255, 0.18)',
+            glow1: 'rgba(255, 255, 255, 0.34)',
+            glow2: 'rgba(255, 255, 255, 0.18)',
+            shadow: 'rgba(15, 23, 42, 0.08)'
+        };
+    }
+
     function setTheme(weather) {
         const root = document.documentElement;
-        let colors;
-
-        if (weather.includes('晴')) {
-            colors = ['#e2eafc', '#fff9db', '#e8f1ff', '#ffffff'];
-        } else if (weather.includes('云')) {
-            colors = ['#e2eafc', '#f1f1f1', '#e8f1ff', '#ffffff'];
-        } else if (weather.includes('阴')) {
-            colors = ['#cfd9df', '#e2ebf0', '#ececec', '#f5f7fa'];
-        } else if (weather.includes('雨') || weather.includes('雪')) {
-            colors = ['#a1c4fd', '#c2e9fb', '#d1d6e6', '#e1eec3'];
-        } else {
-            colors = ['#e2eafc', '#f1f1f1', '#e8f1ff', '#ffffff'];
-        }
+        const { theme: colors, overlay, glow1, glow2, shadow } = resolveWeatherVisual(weather);
 
         root.style.setProperty('--bg-color-1', colors[0]);
         root.style.setProperty('--bg-color-2', colors[1]);
         root.style.setProperty('--bg-color-3', colors[2]);
         root.style.setProperty('--bg-color-4', colors[3]);
+        root.style.setProperty('--weather-overlay', overlay);
+        root.style.setProperty('--weather-glow-1', glow1);
+        root.style.setProperty('--weather-glow-2', glow2);
+        root.style.setProperty('--weather-shadow', shadow);
     }
 
     function updateTime() {
@@ -739,7 +1089,6 @@
             return weatherCache.value;
         }
 
-        const icons = { '晴': '☀️', '多云': '🌤️', '阴': '☁️', '雨': '🌧️', '雷阵雨': '⛈️', '雪': '❄️' };
         const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?city=${widgetSettings.cityCode}&key=${AMAP_KEY}`);
         const data = await res.json();
         if (!(data.status === '1' && data.lives && data.lives[0])) {
@@ -747,8 +1096,9 @@
         }
 
         const live = data.lives[0];
+        const weatherVisual = resolveWeatherVisual(live.weather);
         const weatherInfo = {
-            label: `${icons[live.weather] || '🌤️'} ${live.temperature}°`,
+            label: `${weatherVisual.icon} ${live.temperature}°`,
             detail: `${live.city || widgetSettings.weatherRegion} ${live.weather}`,
             weather: live.weather,
             city: live.city || widgetSettings.weatherRegion
@@ -1041,6 +1391,102 @@
         document.getElementById('settings-cancel').addEventListener('click', closeSettings);
         settingsModal.addEventListener('click', (e) => {
             if (e.target === settingsModal) closeSettings();
+        });
+
+        // 下拉菜单事件处理
+        const shortcutsGrid = document.querySelector('.shortcuts-grid');
+        const dropdownPairs = [
+            { button: document.getElementById('tools-btn'), menu: document.getElementById('tools-menu') },
+            { button: document.getElementById('work-btn'), menu: document.getElementById('work-menu') },
+            { button: document.getElementById('life-btn'), menu: document.getElementById('life-menu') },
+            { button: document.getElementById('forum-btn'), menu: document.getElementById('forum-menu') },
+            { button: document.getElementById('other-btn'), menu: document.getElementById('other-menu') }
+        ];
+
+        dropdownPairs.forEach(({ menu }) => {
+            if (menu && shortcutsGrid && menu.parentElement !== shortcutsGrid) {
+                shortcutsGrid.appendChild(menu);
+            }
+        });
+
+        const openDropdown = ({ button, menu }) => {
+            if (!button || !menu) return;
+            closeAllDropdowns();
+            menu.classList.add('active');
+            button.closest('.dropdown-wrapper')?.classList.add('is-open');
+        };
+
+        const closeAllDropdowns = () => {
+            dropdownPairs.forEach(({ button, menu }) => {
+                menu?.classList.remove('active');
+                button?.closest('.dropdown-wrapper')?.classList.remove('is-open');
+            });
+        };
+
+        dropdownPairs.forEach((pair) => {
+            const { button, menu } = pair;
+            if (!button || !menu) return;
+
+            let openTimer = null;
+            let closeTimer = null;
+
+            const clearTimers = () => {
+                if (openTimer) {
+                    clearTimeout(openTimer);
+                    openTimer = null;
+                }
+                if (closeTimer) {
+                    clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+            };
+
+            const scheduleOpen = () => {
+                if (menu.classList.contains('active')) return;
+                clearTimers();
+                openTimer = setTimeout(() => {
+                    openDropdown(pair);
+                    openTimer = null;
+                }, 500);
+            };
+
+            const scheduleClose = () => {
+                clearTimers();
+                closeTimer = setTimeout(() => {
+                    if (menu.classList.contains('active')) closeAllDropdowns();
+                    closeTimer = null;
+                }, 1000);
+            };
+
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const shouldOpen = !menu.classList.contains('active');
+                clearTimers();
+                if (!shouldOpen) {
+                    closeAllDropdowns();
+                    return;
+                }
+                openDropdown(pair);
+            });
+
+            button.addEventListener('mouseenter', scheduleOpen);
+            button.addEventListener('mouseleave', scheduleClose);
+            menu.addEventListener('mouseenter', clearTimers);
+            menu.addEventListener('mouseleave', scheduleClose);
+
+            menu.querySelectorAll('li a').forEach((link) => {
+                link.addEventListener('click', () => {
+                    clearTimers();
+                    closeAllDropdowns();
+                });
+            });
+        });
+
+        // 点击页面其他地方关闭菜单
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown-wrapper')) {
+                closeAllDropdowns();
+            }
         });
     };
 
