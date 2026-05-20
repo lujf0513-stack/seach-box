@@ -534,6 +534,7 @@
     const AMAP_KEY = '332f5b64fc814a3ded62a85df1f26d6d';
     const SEARCH_ENGINE_STORAGE_KEY = 'preferred-search-engine';
     const WIDGET_SETTINGS_STORAGE_KEY = 'widget-settings';
+    const LAST_WIDGET_VIEW_STORAGE_KEY = 'last-widget-view';
     const SUGGESTION_CALLBACK_PREFIX = 'showSug';
     const DEFAULT_WIDGET_SETTINGS = {
         weatherRegion: '昆山',
@@ -574,6 +575,7 @@
     let singleClickTimer = null;
     let manualWidgetOverride = false;
     let lastScheduledView = '';
+    let lastSavedWidgetView = loadLastWidgetView();
 
     function loadWidgetSettings() {
         try {
@@ -582,6 +584,19 @@
         } catch (e) {
             return { ...DEFAULT_WIDGET_SETTINGS };
         }
+    }
+
+    function loadLastWidgetView() {
+        try {
+            const saved = localStorage.getItem(LAST_WIDGET_VIEW_STORAGE_KEY);
+            return saved || 'weather';
+        } catch (e) {
+            return 'weather';
+        }
+    }
+
+    function saveLastWidgetView(view) {
+        localStorage.setItem(LAST_WIDGET_VIEW_STORAGE_KEY, view);
     }
 
     function persistWidgetSettings() {
@@ -841,17 +856,8 @@
     }
 
     function syncWidgetViewWithSchedule() {
-        const scheduledView = getScheduledWidgetView();
-        const scheduleChanged = scheduledView !== lastScheduledView;
-
-        if (scheduleChanged) {
-            manualWidgetOverride = false;
-            lastScheduledView = scheduledView;
-        }
-
-        if (!manualWidgetOverride) {
-            widgetSettings.widgetView = scheduledView;
-        }
+        // 使用上一次保存的widget视图，而不是根据当前时间判断
+        widgetSettings.widgetView = lastSavedWidgetView;
     }
 
     function openSettings() {
@@ -898,6 +904,8 @@
             const nextSettings = await normalizeSettingsDraft(regionName, startName, endName, transportMode);
             widgetSettings = nextSettings;
             if (!widgetSettings.widgetView) widgetSettings.widgetView = getScheduledWidgetView();
+            lastSavedWidgetView = widgetSettings.widgetView;
+            saveLastWidgetView(widgetSettings.widgetView);
             persistWidgetSettings();
             weatherCache = { value: null, time: 0 };
             routeCache.clear();
@@ -917,6 +925,8 @@
     function toggleWidgetView() {
         manualWidgetOverride = true;
         widgetSettings.widgetView = widgetSettings.widgetView === 'weather' ? 'commute' : 'weather';
+        lastSavedWidgetView = widgetSettings.widgetView;
+        saveLastWidgetView(widgetSettings.widgetView);
         persistWidgetSettings();
         renderWidget(true);
     }
