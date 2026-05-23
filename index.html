@@ -266,15 +266,16 @@
 
         #suggestions {
             position: absolute;
-            top: 105%;
+            top: calc(100% + 10px);
             left: 0;
             width: 100%;
             background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(var(--surface-blur-strong));
-            border-radius: 22px;
+            -webkit-backdrop-filter: blur(var(--surface-blur-strong));
+            border-radius: 20px;
             display: none;
             list-style: none;
-            padding: 10px 0;
+            padding: 8px;
             margin: 0;
             text-align: left;
             z-index: 100;
@@ -283,14 +284,22 @@
         }
 
         #suggestions li {
-            padding: 12px 25px;
-            font-size: 16px;
+            padding: 13px 16px;
+            font-size: 15px;
+            line-height: 1.35;
             cursor: pointer;
             color: rgba(17, 24, 39, 0.92);
+            border-radius: 14px;
+            transition: background 0.16s ease, transform 0.16s ease, color 0.16s ease;
         }
 
         #suggestions li:hover {
             background: rgba(226, 232, 240, 0.72);
+            transform: translateX(2px);
+        }
+
+        #suggestions li + li {
+            margin-top: 2px;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -722,7 +731,7 @@
                     <li><a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank"><span class="menu-icon">☁️</span><span class="menu-label">宏云ERP</span></a></li>
                     <li><a href="https://lujf0513-stack.github.io/voice-tool/" target="_blank"><span class="menu-icon">🎙️</span><span class="menu-label">语音修改工具</span></a></li>
                     <li><a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank"><span class="menu-icon">📦</span><span class="menu-label">思辰微ERP</span></a></li>
-                    <li><a href="https://mp.weixin.qq.com/cgi-bin/home?t=home/index&token=1123876535&lang=zh_CN" target="_blank"><span class="menu-icon">💬</span><span class="menu-label">思辰微公众号</span></a></li>
+                    <li><a href="https://mp.weixin.qq.com/cgi-bin/home?t=home/index&lang=zh_CN&token=873803813" target="_blank"><span class="menu-icon">💬</span><span class="menu-label">思辰微公众号</span></a></li>
                 </ul>
             </div>
             <div class="shortcut-item dropdown-wrapper">
