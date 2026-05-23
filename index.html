@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Search</title>
+    <meta name="color-scheme" content="light dark">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
     <style>
         :root {
@@ -19,6 +20,9 @@
             --weather-glow-1: rgba(255, 255, 255, 0.34);
             --weather-glow-2: rgba(255, 255, 255, 0.18);
             --weather-shadow: rgba(15, 23, 42, 0.08);
+            --surface-blur: 14px;
+            --surface-blur-strong: 18px;
+            --overlay-blur: 4px;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -44,7 +48,6 @@
                 radial-gradient(circle at 84% 84%, var(--bg-color-3) 0, transparent 34%),
                 radial-gradient(circle at 12% 88%, var(--bg-color-4) 0, transparent 36%),
                 linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08));
-            background-attachment: fixed;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -69,8 +72,8 @@
                 radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.16), transparent 42%),
                 linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 56%);
             mix-blend-mode: soft-light;
-            backdrop-filter: blur(6px) saturate(1.08);
-            -webkit-backdrop-filter: blur(6px) saturate(1.08);
+            backdrop-filter: blur(var(--overlay-blur)) saturate(1.04);
+            -webkit-backdrop-filter: blur(var(--overlay-blur)) saturate(1.04);
             z-index: -1;
         }
 
@@ -98,8 +101,8 @@
 
         .widget-item {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(var(--surface-blur));
+            -webkit-backdrop-filter: blur(var(--surface-blur));
             border: 1px solid var(--glass-border);
             border-radius: 18px;
             box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
@@ -191,7 +194,7 @@
 
         .search-wrapper {
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(var(--surface-blur-strong));
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 8px;
@@ -266,8 +269,8 @@
             top: 105%;
             left: 0;
             width: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(var(--surface-blur-strong));
             border-radius: 22px;
             display: none;
             list-style: none;
@@ -275,19 +278,35 @@
             margin: 0;
             text-align: left;
             z-index: 100;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 20px 42px rgba(15, 23, 42, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.48);
+            box-shadow: 0 20px 42px rgba(15, 23, 42, 0.14);
         }
 
         #suggestions li {
             padding: 12px 25px;
             font-size: 16px;
             cursor: pointer;
-            color: var(--text-main);
+            color: rgba(17, 24, 39, 0.92);
         }
 
         #suggestions li:hover {
-            background: rgba(255, 255, 255, 0.18);
+            background: rgba(226, 232, 240, 0.72);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            #suggestions {
+                background: rgba(17, 24, 39, 0.88);
+                border-color: rgba(255, 255, 255, 0.1);
+                box-shadow: 0 20px 42px rgba(0, 0, 0, 0.34);
+            }
+
+            #suggestions li {
+                color: rgba(255, 255, 255, 0.92);
+            }
+
+            #suggestions li:hover {
+                background: rgba(51, 65, 85, 0.72);
+            }
         }
 
         .shortcuts-grid {
@@ -299,7 +318,7 @@
 
         .shortcut-item {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(var(--surface-blur));
             border: 1px solid var(--glass-border);
             border-radius: 18px;
             padding: 12px 0;
@@ -367,7 +386,7 @@
             left: 50%;
             transform: translateX(-50%) translateY(-6px) scale(0.98);
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(var(--surface-blur));
             border: 1px solid var(--glass-border);
             border-radius: 22px;
             padding: 14px;
@@ -448,8 +467,8 @@
             justify-content: center;
             padding: 24px;
             background: rgba(15, 23, 42, 0.18);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.25s ease;
@@ -597,6 +616,12 @@
         }
 
         @media (max-width: 640px) {
+            :root {
+                --surface-blur: 10px;
+                --surface-blur-strong: 12px;
+                --overlay-blur: 0px;
+            }
+
             body {
                 padding-top: 16vh;
             }
@@ -627,6 +652,17 @@
             .weather-trigger::after {
                 left: auto;
                 right: 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body,
+            .widget-item,
+            .search-wrapper,
+            .shortcut-item,
+            .dropdown-menu,
+            .settings-modal {
+                transition: none;
             }
         }
     </style>
@@ -686,7 +722,7 @@
                     <li><a href="http://114.80.41.231:6088/sysn/view/init/login.ashx" target="_blank"><span class="menu-icon">☁️</span><span class="menu-label">宏云ERP</span></a></li>
                     <li><a href="https://lujf0513-stack.github.io/voice-tool/" target="_blank"><span class="menu-icon">🎙️</span><span class="menu-label">语音修改工具</span></a></li>
                     <li><a href="https://www.jlc-erp.com/erp/#/workbench" target="_blank"><span class="menu-icon">📦</span><span class="menu-label">思辰微ERP</span></a></li>
-                    <li><a href="https://mp.weixin.qq.com/cgi-bin/home?t=home/index&lang=zh_CN&token=1234062298" target="_blank"><span class="menu-icon">💬</span><span class="menu-label">思辰微公众号</span></a></li>
+                    <li><a href="https://mp.weixin.qq.com/cgi-bin/home?t=home/index&token=1123876535&lang=zh_CN" target="_blank"><span class="menu-icon">💬</span><span class="menu-label">思辰微公众号</span></a></li>
                 </ul>
             </div>
             <div class="shortcut-item dropdown-wrapper">
@@ -783,6 +819,7 @@
     const SEARCH_ENGINE_STORAGE_KEY = 'preferred-search-engine';
     const WIDGET_SETTINGS_STORAGE_KEY = 'widget-settings';
     const LAST_WIDGET_VIEW_STORAGE_KEY = 'last-widget-view';
+    const WIDGET_CACHE_STORAGE_KEY = 'widget-cache';
     const SUGGESTION_CALLBACK_PREFIX = 'showSug';
     const DEFAULT_WIDGET_SETTINGS = {
         weatherRegion: '昆山',
@@ -815,15 +852,19 @@
     const saveButton = document.getElementById('settings-save');
 
     let widgetSettings = loadWidgetSettings();
-    let weatherCache = { value: null, time: 0 };
+    let weatherCache = loadWidgetCache();
     let routeCache = new Map();
     let geocodeCache = new Map();
     let suggestionTimer = null;
     let currentSuggestionCallback = null;
+    let currentSuggestionScript = null;
     let singleClickTimer = null;
     let manualWidgetOverride = false;
     let lastScheduledView = '';
     let lastSavedWidgetView = loadLastWidgetView();
+    let clockTimer = null;
+    let suggestionRequestSeq = 0;
+    let hasWarmConnections = false;
 
     function loadWidgetSettings() {
         try {
@@ -841,6 +882,23 @@
         } catch (e) {
             return 'weather';
         }
+    }
+
+    function loadWidgetCache() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(WIDGET_CACHE_STORAGE_KEY));
+            if (!saved || typeof saved !== 'object') return { value: null, time: 0 };
+            return {
+                value: saved.value || null,
+                time: Number(saved.time) || 0
+            };
+        } catch (e) {
+            return { value: null, time: 0 };
+        }
+    }
+
+    function persistWidgetCache() {
+        localStorage.setItem(WIDGET_CACHE_STORAGE_KEY, JSON.stringify(weatherCache));
     }
 
     function saveLastWidgetView(view) {
@@ -983,6 +1041,14 @@
             String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     }
 
+    function scheduleClock() {
+        if (clockTimer) clearTimeout(clockTimer);
+        updateTime();
+        const now = new Date();
+        const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+        clockTimer = setTimeout(scheduleClock, Math.max(250, delay));
+    }
+
     function restoreEngineSelection() {
         const savedEngine = localStorage.getItem(SEARCH_ENGINE_STORAGE_KEY);
         if (!savedEngine) return;
@@ -1106,6 +1172,7 @@
             city: live.city || widgetSettings.weatherRegion
         };
         weatherCache = { value: weatherInfo, time: Date.now() };
+        persistWidgetCache();
         widgetSettings.weatherRegion = weatherInfo.city;
         persistWidgetSettings();
         setTheme(live.weather);
@@ -1157,6 +1224,14 @@
         };
         routeCache.set(routeKey, { value, time: Date.now() });
         return value;
+    }
+
+    function renderCachedWeather() {
+        if (!weatherCache.value || Date.now() - weatherCache.time >= CACHE_TTL.weather) return false;
+        weatherDisplay.innerText = weatherCache.value.label;
+        syncWidgetTooltip(weatherCache.value.detail);
+        setTheme(weatherCache.value.weather);
+        return true;
     }
 
     async function renderWidget(force = false) {
@@ -1298,13 +1373,42 @@
         if (currentSuggestionCallback && window[currentSuggestionCallback]) {
             delete window[currentSuggestionCallback];
         }
+        if (currentSuggestionScript) {
+            currentSuggestionScript.remove();
+            currentSuggestionScript = null;
+        }
         currentSuggestionCallback = null;
+    }
+
+    function warmConnections() {
+        if (hasWarmConnections) return;
+        hasWarmConnections = true;
+
+        [
+            'https://restapi.amap.com',
+            'https://suggestion.baidu.com',
+            'https://www.baidu.com',
+            'https://www.google.com',
+            'https://chatgpt.com',
+            'https://gemini.google.com'
+        ].forEach((href) => {
+            const link = document.createElement('link');
+            link.rel = 'preconnect';
+            link.href = href;
+            link.crossOrigin = 'anonymous';
+            document.head.appendChild(link);
+        });
     }
 
     function requestSuggestions(keyword) {
         clearSuggestionCallback();
+        const requestId = ++suggestionRequestSeq;
         currentSuggestionCallback = `${SUGGESTION_CALLBACK_PREFIX}_${Date.now()}`;
         window[currentSuggestionCallback] = (data) => {
+            if (requestId !== suggestionRequestSeq) {
+                clearSuggestionCallback();
+                return;
+            }
             sugBox.innerHTML = '';
             const list = Array.isArray(data.s) ? data.s.slice(0, 6) : [];
             if (!list.length) {
@@ -1318,9 +1422,11 @@
         };
 
         const script = document.createElement('script');
+        currentSuggestionScript = script;
         script.src = `https://suggestion.baidu.com/su?wd=${encodeURIComponent(keyword)}&cb=${currentSuggestionCallback}`;
         script.onload = script.onerror = () => {
             script.remove();
+            if (currentSuggestionScript === script) currentSuggestionScript = null;
         };
         document.body.appendChild(script);
     }
@@ -1338,14 +1444,31 @@
         window.open(urls[engine], '_blank');
     }
 
-    window.onload = () => {
+    function scheduleInitialWidgetRender() {
+        const run = () => {
+            renderWidget(false);
+        };
+
+        if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(run, { timeout: 1500 });
+            return;
+        }
+
+        requestAnimationFrame(() => {
+            setTimeout(run, 0);
+        });
+    }
+
+    function initPage() {
         restoreEngineSelection();
         syncWidgetViewWithSchedule();
         syncWidgetTooltip();
-        updateTime();
-        renderWidget(true);
+        scheduleClock();
+        renderCachedWeather();
+        scheduleInitialWidgetRender();
+        window.addEventListener('pointerdown', warmConnections, { once: true, passive: true });
+        input.addEventListener('focus', warmConnections, { once: true });
 
-        setInterval(updateTime, 1000);
         setInterval(() => {
             syncWidgetViewWithSchedule();
             renderWidget(false);
@@ -1490,7 +1613,13 @@
                 closeAllDropdowns();
             }
         });
-    };
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPage, { once: true });
+    } else {
+        initPage();
+    }
 
     input.addEventListener('input', () => {
         const value = input.value.trim();
@@ -1500,7 +1629,12 @@
             clearSuggestionCallback();
             return;
         }
-        suggestionTimer = setTimeout(() => requestSuggestions(value), 180);
+        if (value.length < 2) {
+            sugBox.style.display = 'none';
+            clearSuggestionCallback();
+            return;
+        }
+        suggestionTimer = setTimeout(() => requestSuggestions(value), 260);
     });
 
     input.addEventListener('keydown', (e) => {
